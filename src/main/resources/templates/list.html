@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" href="/css/bootstrap.css" >
+<link rel="stylesheet" href="/css/mycss.css" >
+</head>
+<body id="body">
+<header id="header">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="col-md-4 text-right">
+        <img src="/img/logo_elca.png"/>
+      </div>
+      <div class="col-md-8">
+          <h3><strong>Project Information Management</strong></h3>
+      </div>
+    </div>
+    <div class="col-md-4 text-right pad-right40 mar-top25"> EN | <a href="#" class="new-menu-style">FR</a></div>
+    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style">Help</a>&nbsp&nbsp&nbsp&nbsp&nbsp Log out</div>
+    
+  </div>
+</header>
+<div class="row">
+<div class="col-md-3" id="side-bar">
+  <div class="col-md-5"></div>
+  <div class="col-md-7">
+    <br><br>
+    <a href="#" class="new-menu-style">Projects list</a><br><br><br>
+    <a href="#" class="new-menu-style">New</a><br><br>
+    <a href="#" class="project-menu-style">Project</a><br><br>
+    <a>Customer</a><br><br>
+    <a>Supplier</a><br><br>
+  </div>
+  
+</div>
+<div class="col-md-8" id="main-content">
+<br>
+  <h4>New Project</h4>
+  <hr>
+  <form class="form-inline" id="form-search">
+    <div class="col-md-4-cus">
+      <input type="text" class="form-control" id="text-search" placeholder="Project number, name, customer name">
+    </div>
+    <div class="col-md-2-cus" style="padding-left:8px;">
+      <select class="form-control">
+        <option value="">Project Status</option>
+        <option value="NEW">New</option>
+        <option value="PLA">Planed</option>
+        <option value="INP">In Progress</option>
+        <option value="FIN">Finished</option>
+      </select>
+    </div>
+    <div class="col-md-3-cus">
+      <input type="submit" class="btn btn-primary" style="width:70%;">
+    </div>
+    <div class="col-md-2-cus" style="padding-top:5px;">
+      <a href="#">Reset Search</a>
+    </div>
+  </form>
+  <br>
+  <br>
+  <br>
+  <table id="project-table" class="table table-bordered">
+    <thead>
+      <tr>
+        <th></th>
+        <th class="col-md-1 text-center">Number</th>
+        <th class="col-md-5">Name</th>
+        <th class="col-md-1">Status</th>
+        <th class="col-md-3">Customer</th>
+        <th class="col-md-1 text-center">Start Date</th>
+        <th class="col-md-1 text-center">Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-center">
+          <input type="checkbox" class="checkbox-cus">
+        </td>
+        <td class="text-right">
+          3116
+        </td>
+        <td>
+          Facturation
+        </td>
+        <td>
+          New
+        </td>
+        <td>
+          Les retainers pro
+        </td>
+        <td class="text-center">
+          25.02.2004
+        </td>
+        <td class="text-center">
+          <a href="#"><img src="/img/delete_icon.png"/></a>
+        </td>
+      </tr>
+      
+      <tr>
+        <td class="text-center" style="width:30px;">
+          <input type="checkbox" class="checkbox-cus">
+        </td>
+        <td class="text-right">
+          3116
+        </td>
+        <td>
+          Facturation
+        </td>
+        <td>
+          New
+        </td>
+        <td>
+          Les retainers pro
+        </td>
+        <td class="text-center">
+          25.02.2004
+        </td>
+        <td class="text-center">
+          <a href="#"><img src="/img/delete_icon.png"/></a>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-center" style="width:30px;">
+          <input type="checkbox" class="checkbox-cus">
+        </td>
+        <td class="text-right">
+          3116
+        </td>
+        <td>
+          Facturation
+        </td>
+        <td>
+          New
+        </td>
+        <td>
+          Les retainers pro
+        </td>
+        <td class="text-center">
+          25.02.2004
+        </td>
+        <td class="text-center">
+          <a href="#"><img src="/img/delete_icon.png"/></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="text-right">
+    <ul class="pagination">
+    <li><a href="#">&lt&lt</a></li>
+    <li><a href="#">1</a></li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li class="disabled"><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+    <li><a href="#">>></a></li>
+  </ul>
+  </div>
+</div>
+<div class="col-md-1"></div>
+</div>
+<footer></footer>
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.js"></script>
+
+
+</body>
+</html>

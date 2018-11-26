@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" href="/css/bootstrap.css" >
+<link rel="stylesheet" href="/css/mycss.css" >
+</head>
+<body id="body">
+<header id="header">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="col-md-4 text-right">
+        <img src="/img/logo_elca.png"/>
+      </div>
+      <div class="col-md-8">
+          <h3><strong>Project Information Management</strong></h3>
+      </div>
+    </div>
+    <div class="col-md-4 text-right pad-right40 mar-top25"> EN | <a href="#" class="new-menu-style">FR</a></div>
+    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style">Help</a>&nbsp&nbsp&nbsp&nbsp&nbsp Log out</div>
+    
+  </div>
+</header>
+<div class="col-md-3" id="side-bar">
+  <div class="col-md-5"></div>
+  <div class="col-md-7">
+    <br><br>
+    <a href="#" class="new-menu-style">Projects list</a><br><br><br>
+    <a href="#" class="new-menu-style">New</a><br><br>
+    <a href="#" class="project-menu-style">Project</a><br><br>
+    <a>Customer</a><br><br>
+    <a>Supplier</a><br><br>
+  </div>
+  
+</div>
+<div class="col-md-7" id="main-content">
+<br>
+  <h4>New Project</h4>
+  <hr>
+  <form class="form-horizontal mar-lef20">
+    <div class="form-group pad-top-bot10">
+      <div class="col-md-3">
+        <label for="pro_num">Project Number <span class="mandatory">*</span></label>
+      </div>
+      <div class="col-md-3">
+      <input type="text" id="pro_num" class="form-control in-txt-cus">
+      </div>
+    </div>
+    <div class="form-group pad-top-bot10">
+      <div class="col-md-3">
+        <label for="pro_num">Project Name <span class="mandatory">*</span></label>
+      </div>
+      <div class="col-md-9">
+      <input type="text" id="pro_num" class="form-control in-txt-cus">
+      </div>
+    </div>
+    <div class="form-group pad-top-bot10">
+      <div class="col-md-3">
+        <label for="pro_num">Customer <span class="mandatory">*</span></label>
+      </div>
+      <div class="col-md-9">
+      <input type="text" id="pro_num" class="form-control in-txt-cus">
+      </div>
+    </div>
+    <div class="form-group pad-top-bot10">
+      <div class="col-md-3">
+        <label for="pro_num">Group <span class="mandatory">*</span></label>
+      </div>
+      <div class="col-md-3">
+        <select class="form-control in-txt-cus" style="font-size:12px;">
+          <option value="" selected>Group</option>
+          <option value="CIM">CIM</option>
+          <option value="JAV">JAVA</option>
+          <option value="SEC">Secutix</option>
+          <option value="NET">.NET</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group pad-top-bot10">
+      <div class="col-md-3">
+        <label for="pro_num">Members</label>
+      </div>
+      <div class="col-md-9">
+      <input type="text" id="pro_num" class="form-control in-txt-cus">
+      </div>
+    </div>
+    <div class="form-group pad-top-bot10">
+      <div class="col-md-3">
+        <label for="pro_num">Status <span class="mandatory">*</span></label>
+      </div>
+      <div class="col-md-3">
+        <select class="form-control in-txt-cus" style="font-size:12px;">
+          <option value="NEW">New</option>
+          <option value="PLA">Planned</option>
+          <option value="INP">In Progress</option>
+          <option value="FIN">Finished</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group pad-top-bot10">
+      <div class="col-md-3">
+        <label for="pro_num">Start date <span class="mandatory">*</span></label>
+      </div>
+      <div class="col-md-3">
+        <div class="form-control-cus in-txt-cus">
+          <input type="text" id="pro_num" class="date-cus">
+          <a href="#"><img src="/img/u89.png"/></a>
+        </div>
+      
+      </div>
+    
+      <div class="col-md-3 text-center">
+        <label for="pro_num">End date</label>
+      </div>
+      <div class="col-md-3">
+        <div class="form-control-cus in-txt-cus">
+          <input type="text" id="pro_num" class="date-cus">
+          <a href="#"><img src="/img/u89.png"/></a>
+        </div>
+      </div>
+    </div>
+  </form>
+  <hr>
+  <div class="row text-right">
+    <div class="col-md-5"></div>
+    <div class="col-md-3">
+      <button class="btn btn-default btn-block">Cancel</button>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+      <button class="btn btn-primary btn-block">Create Project</button>
+    </div>
+  </div>
+</div>
+<div class="col-md-2"></div>
+<footer></footer>
+<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/js/bootstrap.js"></script>
+
+
+</body>
+</html>
