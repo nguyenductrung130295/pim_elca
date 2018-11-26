@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<link rel="stylesheet" href="/css/bootstrap.css" >
+<link rel="stylesheet" th:href="@{/css/bootstrap.css}" >
 <link rel="stylesheet" href="/css/mycss.css" >
 </head>
 <body id="body">
@@ -12,11 +12,11 @@
         <img src="/img/logo_elca.png"/>
       </div>
       <div class="col-md-8">
-          <h3><strong>Project Information Management</strong></h3>
+          <h3><strong th:text="#{label.project_name}"></strong></h3>
       </div>
     </div>
-    <div class="col-md-4 text-right pad-right40 mar-top25"> EN | <a href="#" class="new-menu-style">FR</a></div>
-    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style">Help</a>&nbsp&nbsp&nbsp&nbsp&nbsp Log out</div>
+    <div class="col-md-4 text-right pad-right40 mar-top25"> EN | <a href="#" id="fr_lang" class="new-menu-style">FR</a></div>
+    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style" th:text="#{laebl.help}"></a>&nbsp&nbsp&nbsp&nbsp&nbsp Log out</div>
     
   </div>
 </header>
@@ -25,36 +25,36 @@
   <div class="col-md-5"></div>
   <div class="col-md-7">
     <br><br>
-    <a href="#" class="new-menu-style">Projects list</a><br><br><br>
-    <a href="#" class="new-menu-style">New</a><br><br>
-    <a href="#" class="project-menu-style">Project</a><br><br>
-    <a>Customer</a><br><br>
-    <a>Supplier</a><br><br>
+    <a href="#" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
+    <a href="#" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
+    <a href="#" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
+    <a th:text="#{label.menu.customer}"></a><br><br>
+    <a th:text="#{label.menu.supplier}"></a><br><br>
   </div>
   
 </div>
 <div class="col-md-8" id="main-content">
 <br>
-  <h4>New Project</h4>
+  <h4 th:text="#{label.title.project_new}"></h4>
   <hr>
   <form class="form-inline" id="form-search">
     <div class="col-md-4-cus">
-      <input type="text" class="form-control" id="text-search" placeholder="Project number, name, customer name">
+      <input type="text" class="form-control" id="text-search" th:placeholder="#{text.placeholder_search}">
     </div>
     <div class="col-md-2-cus" style="padding-left:8px;">
       <select class="form-control">
-        <option value="">Project Status</option>
-        <option value="NEW">New</option>
-        <option value="PLA">Planed</option>
-        <option value="INP">In Progress</option>
-        <option value="FIN">Finished</option>
+        <option value="" th:text="#{label.title.project_status}"></option>
+        <option value="NEW" th:text="#{project.status.new}"></option>
+        <option value="PLA" th:text="#{project.status.planned}"></option>
+        <option value="INP" th:text="#{project.status.in_progress}"></option>
+        <option value="FIN" th:text="#{project.status.finished}"></option>
       </select>
     </div>
     <div class="col-md-3-cus">
-      <input type="submit" class="btn btn-primary" style="width:70%;">
+      <input type="submit" th:value="#{button.search_project}" class="btn btn-primary" style="width:70%;">
     </div>
     <div class="col-md-2-cus" style="padding-top:5px;">
-      <a href="#">Reset Search</a>
+      <a href="#" th:text="#{button.search_reset}"></a>
     </div>
   </form>
   <br>
@@ -64,12 +64,12 @@
     <thead>
       <tr>
         <th></th>
-        <th class="col-md-1 text-center">Number</th>
-        <th class="col-md-5">Name</th>
-        <th class="col-md-1">Status</th>
-        <th class="col-md-3">Customer</th>
-        <th class="col-md-1 text-center">Start Date</th>
-        <th class="col-md-1 text-center">Delete</th>
+        <th class="col-md-1 text-center" th:text="#{project.number}"></th>
+        <th class="col-md-5" th:text="#{project.name}"></th>
+        <th class="col-md-1" th:text="#{project.status}"></th>
+        <th class="col-md-3" th:text="#{project.customer}"></th>
+        <th class="col-md-1 text-center" th:text="#{project.start_date}"></th>
+        <th class="col-md-1 text-center" th:text="#{project.delete}"></th>
       </tr>
     </thead>
     <tbody>
@@ -162,6 +162,7 @@
 <footer></footer>
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.js"></script>
+<script type="text/javascript" src="/js/myjavascript.js"></script>
 
 
 </body>
