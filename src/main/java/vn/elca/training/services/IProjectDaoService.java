@@ -3,6 +3,7 @@ package vn.elca.training.services;
 import java.util.List;
 
 import vn.elca.training.entities.Project;
+import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 
 public interface IProjectDaoService {
     List<Project> getProjectAll();
@@ -16,4 +17,6 @@ public interface IProjectDaoService {
     void delete(Long id);
 
     List<Project> projectByQuery(String query);
+
+    boolean checkId(Long id) throws ProjectNumberAlreadyExistsException;
 }

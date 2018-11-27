@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import vn.elca.training.entities.Project;
+import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 import vn.elca.training.services.IProjectDaoService;
 import vn.elca.training.utils.ProjectStatusEnum;
 
@@ -17,17 +18,17 @@ public class ProjectDaoImp implements IProjectDaoService {
     public ProjectDaoImp() {
         System.out.println("-------DB: init project data starting");
         list.add(new Project(Long.valueOf("1"), 1, 1, "Project A", "Customer A", ProjectStatusEnum.NEW, new Date(),
-                new Date()));
+                new Date(), Long.valueOf(1)));
         list.add(new Project(Long.valueOf("2"), 2, 2, "Project B", "Customer C", ProjectStatusEnum.INP, new Date(),
-                new Date()));
+                new Date(), Long.valueOf(1)));
         list.add(new Project(Long.valueOf("3"), 3, 3, "Project C", "Customer B", ProjectStatusEnum.FIN, new Date(),
-                new Date()));
+                new Date(), Long.valueOf(1)));
         list.add(new Project(Long.valueOf("4"), 4, 4, "Project D", "Customer c", ProjectStatusEnum.NEW, new Date(),
-                new Date()));
+                new Date(), Long.valueOf(1)));
         list.add(new Project(Long.valueOf("5"), 5, 5, "Project E", "Customer B", ProjectStatusEnum.PLA, new Date(),
-                new Date()));
+                new Date(), Long.valueOf(1)));
         list.add(new Project(Long.valueOf("6"), 6, 6, "Project F", "Customer A", ProjectStatusEnum.NEW, new Date(),
-                new Date()));
+                new Date(), Long.valueOf(1)));
         System.out.println("-------DB: init project data done");
     }
 
@@ -57,6 +58,10 @@ public class ProjectDaoImp implements IProjectDaoService {
     @Override
     public int create(Project project) {
         // TODO Auto-generated method stub
+        if (null != project) {
+            list.add(project);
+            return 1;
+        }
         return 0;
     }
 
@@ -69,5 +74,16 @@ public class ProjectDaoImp implements IProjectDaoService {
     public List<Project> projectByQuery(String query) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public boolean checkId(Long id) throws ProjectNumberAlreadyExistsException {
+        // TODO Auto-generated method stub
+        for (Project p : list) {
+            if (p.getId().equals(id)) {
+                throw new ProjectNumberAlreadyExistsException("The projet number already existed.");
+            }
+        }
+        return false;
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import vn.elca.training.entities.Project;
+import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 
 @Service
 public class ProjectServiceImp implements IProjectService {
@@ -48,5 +49,11 @@ public class ProjectServiceImp implements IProjectService {
     public void deleteProjectById(Long id) {
         // TODO Auto-generated method stub
         projectDao.delete(id);
+    }
+
+    @Override
+    public boolean checkIdProjectExits(Long id) throws ProjectNumberAlreadyExistsException {
+        // TODO Auto-generated method stub
+        return projectDao.checkId(id);
     }
 }

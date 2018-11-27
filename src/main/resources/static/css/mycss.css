@@ -96,3 +96,6 @@ label{
 #text-search{
   width:100%;
 }
+#error_number_project{
+  display:none;
+}

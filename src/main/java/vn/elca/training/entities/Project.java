@@ -11,13 +11,14 @@ public class Project extends Version {
     private ProjectStatusEnum status;
     private Date startDate;
     private Date endDate;
+    private Long groupId;
 
     public Project() {
         super();
     }
 
     public Project(Long id, int version, int projectNumber, String name, String customer, ProjectStatusEnum status,
-            Date startDate, Date endDate) {
+            Date startDate, Date endDate, Long groupId) {
         super(id, version);
         this.projectNumber = projectNumber;
         this.name = name;
@@ -25,6 +26,7 @@ public class Project extends Version {
         this.status = status;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.groupId = groupId;
     }
 
     @Override
@@ -97,5 +99,13 @@ public class Project extends Version {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 }

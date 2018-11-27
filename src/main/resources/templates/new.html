@@ -34,61 +34,74 @@
 </div>
 <div class="col-md-7" id="main-content">
 <br>
-  <h4 th:text="#{label.title.project_new}"></h4>
+  <h4 th:text="#{label.title.project_new}" th:if="${type=='new'}"></h4>
+  <h4 th:text="#{label.title.project_edit}" th:if="${type=='edit'}"></h4>
   <hr>
-  <form class="form-horizontal mar-lef20">
+  <div class="alert alert-danger" th:if="${errorValidate}">
+    <strong th:text="#{error.validate}"></strong>
+  </div>
+  <form class="form-horizontal mar-lef20" th:action="${type=='new'?'create':'update'}" th:object="${project}" method="post">
     <div class="form-group pad-top-bot10">
       <div class="col-md-3">
-        <label for="pro_num" th:text="#{project.project_number}"> <span class="mandatory">*</span></label>
+        <label for="pro_num"><span th:text="#{project.project_number}"></span> <span class="mandatory">*</span></label>
       </div>
       <div class="col-md-3">
-      <input type="text" id="pro_num" class="form-control in-txt-cus">
+        <input type="text" id="pro_num" th:field="*{projectNumber}" th:readonly="${type=='edit'?true:false}" class="form-control in-txt-cus">
+      </div>
+      <div class="col-md-6">
+        <span id="error_number_project" class="mandatory" th:text="#{error.projectexists}"></span>
       </div>
     </div>
     <div class="form-group pad-top-bot10">
       <div class="col-md-3">
-        <label for="pro_num" th:text="#{project.project_name}"><span class="mandatory">*</span></label>
+        <label for="pro_name"><span th:text="#{project.project_name}"></span><span class="mandatory">*</span></label>
       </div>
       <div class="col-md-9">
-      <input type="text" id="pro_num" class="form-control in-txt-cus">
+      <input type="text" id="pro_name" th:field="*{name}" class="form-control in-txt-cus">
       </div>
     </div>
     <div class="form-group pad-top-bot10">
       <div class="col-md-3">
-        <label for="pro_num" th:text="#{project.customer}"><span class="mandatory">*</span></label>
+        <label for="pro_customer"><span th:text="#{project.customer}"></span><span class="mandatory">*</span></label>
       </div>
       <div class="col-md-9">
-      <input type="text" id="pro_num" class="form-control in-txt-cus">
+      <input type="text" id="pro_customer" th:field="*{customer}" class="form-control in-txt-cus">
       </div>
     </div>
     <div class="form-group pad-top-bot10">
       <div class="col-md-3">
-        <label for="pro_num">Group <span class="mandatory">*</span></label>
+        <label for="pro_group"><span th:text="#{project.group}"></span><span class="mandatory">*</span></label>
       </div>
       <div class="col-md-3">
-        <select class="form-control in-txt-cus" style="font-size:12px;">
-          <option value="" selected >Group</option>
-          <option value="CIM">CIM</option>
-          <option value="JAV">JAVA</option>
-          <option value="SEC">Secutix</option>
-          <option value="NET">.NET</option>
+        <select class="form-control in-txt-cus" style="font-size:12px;" th:field="*{groupId}">
+          <option value="" selected th:text="#{project.group}"></option>
+          <th:foreach  th:each="gr : ${groupProject}">
+            <option th:value="${gr.id}" th:text="${gr.name}"></option>
+          </th:foreach>
+          <!-- <option value="1" th:text="#{group.name}">CIM</option>
+          <option value="2" th:text="#{group.name}">JAVA</option>
+          <option value="3" th:text="#{group.name}">Secutix</option>
+          <option value="4" th:text="#{group.name}">.NET</option> -->
         </select>
       </div>
     </div>
     <div class="form-group pad-top-bot10">
       <div class="col-md-3">
-        <label for="pro_num"  th:text="#{project.member}"></label>
+        <label for="pro_member"  th:text="#{project.member}"></label>
       </div>
       <div class="col-md-9">
-      <input type="text" id="pro_num" class="form-control in-txt-cus">
+      <input type="text" id="pro_member" name="project_member" th:value="${listMember}" class="form-control in-txt-cus">
       </div>
     </div>
     <div class="form-group pad-top-bot10">
       <div class="col-md-3">
-        <label for="pro_num" th:text="#{project.status}"> <span class="mandatory">*</span></label>
+        <label for="pro_status"><span th:text="#{project.status}"></span> <span class="mandatory">*</span></label>
       </div>
       <div class="col-md-3">
-        <select class="form-control in-txt-cus" style="font-size:12px;">
+        <select class="form-control in-txt-cus" style="font-size:12px;" th:field="*{status}" th:if="${type=='new'}">
+          <option value="NEW" th:text="#{project.status.new}"></option>          
+        </select>
+        <select class="form-control in-txt-cus" style="font-size:12px;" th:field="*{status}" th:unless="${type=='new'}">
           <option value="NEW" th:text="#{project.status.new}"></option>
           <option value="PLA" th:text="#{project.status.planned}"></option>
           <option value="INP" th:text="#{project.status.in_progress}"></option>
@@ -98,28 +111,27 @@
     </div>
     <div class="form-group pad-top-bot10">
       <div class="col-md-3">
-        <label for="pro_num" th:text="#{project.start_date}"><span class="mandatory">*</span></label>
+        <label for="pro_startdate"><span th:text="#{project.start_date}"></span><span class="mandatory">*</span></label>
       </div>
       <div class="col-md-3">
         <div class="form-control-cus in-txt-cus">
-          <input type="text" id="pro_num" class="date-cus">
+          <input type="text" id="pro_startdate" th:field="*{startDate}" class="date-cus">
           <a href="#"><img src="/img/u89.png"/></a>
         </div>
       
       </div>
     
       <div class="col-md-3 text-center">
-        <label for="pro_num" th:text="#{project.end_date}"></label>
+        <label for="pro_enddate" th:text="#{project.end_date}"></label>
       </div>
       <div class="col-md-3">
         <div class="form-control-cus in-txt-cus">
-          <input type="text" id="pro_num" class="date-cus">
+          <input type="text" id="pro_enddate" th:field="*{endDate}" class="date-cus">
           <a href="#"><img src="/img/u89.png"/></a>
         </div>
       </div>
     </div>
-  </form>
-  <hr>
+    <hr>
   <div class="row text-right">
     <div class="col-md-5"></div>
     <div class="col-md-3">
@@ -127,14 +139,17 @@
     </div>
     <div class="col-md-1"></div>
     <div class="col-md-3">
-      <button class="btn btn-primary btn-block" th:text="#{button.project_create}"></button>
+      <input type="submit" class="btn btn-primary btn-block" th:value="#{button.project_create}">
     </div>
   </div>
+  </form>
+  
 </div>
 <div class="col-md-2"></div>
 <footer></footer>
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.js"></script>
+<script type="text/javascript" src="/js/myjavascript.js"></script>
 
 
 </body>

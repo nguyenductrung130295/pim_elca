@@ -1,9 +1,17 @@
 package vn.elca.training.web;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +21,10 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.elca.training.entities.Project;
+import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
+import vn.elca.training.services.IGroupService;
 import vn.elca.training.services.IProjectService;
+import vn.elca.training.utils.AppUtils;
 
 @Controller("project")
 @SessionAttributes("strQuery")
@@ -21,6 +32,8 @@ import vn.elca.training.services.IProjectService;
 public class PimController {
     @Autowired
     IProjectService projectService;
+    @Autowired
+    IGroupService groupService;
 
     @RequestMapping("/")
     @ResponseBody
@@ -29,20 +42,51 @@ public class PimController {
     }
 
     @RequestMapping("/new")
-    ModelAndView newProject() {
-        return new ModelAndView("new", "project", new Project());
+    String newProject(Model model) {
+        model.addAttribute("project", new Project());
+        model.addAttribute("listMember", "");
+        model.addAttribute("type", "new");
+        model.addAttribute("groupProject", groupService.getAllGroup());
+        return "new";
+    }
+
+    @PostMapping("/create")
+    String createProject(@ModelAttribute("project") Project project,
+            @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
+        System.out.println("#######Create method invoked: " + project.getStatus() + " ######VISA:" + listMemberVISA);
+        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project)) {
+            model.addAttribute("errorValidate", "true");
+            model.addAttribute("listMember", "");// ????????????????????????
+            model.addAttribute("type", "new");
+            model.addAttribute("groupProject", groupService.getAllGroup());
+            return "new";
+        }
+        project.setId(Long.valueOf(project.getProjectNumber()));// ?????NOTE:whatelksdjfalksjfdlaksjdflaksjdlk
+        if (projectService.createProject(project) == 0) {
+            return "redirect:error";
+        }
+        return "redirect:list";
     }
 
     @RequestMapping("/{id}/edit")
-    ModelAndView editProject(@PathVariable("id") Long id) {
+    String editProject(@PathVariable("id") Long id, Model model) {
         Project project = projectService.findProjectById(id);
-        System.out.println("################ Project: " + project.getName());
-        return new ModelAndView("new", "project", project);
+        model.addAttribute("type", "edit");
+        model.addAttribute("project", project);
+        model.addAttribute("groupProject", groupService.getAllGroup());
+        model.addAttribute("listMember", "TYU,HHH,UUU,GGG");// ????????????
+        return "new";
     }
 
     @PostMapping("/update")
     String updateProject() {
         return "redirect:list";
+    }
+
+    @RequestMapping("/error")
+    @ResponseBody
+    String errorPage() {
+        return "errorpage";
     }
 
     @RequestMapping("/list")
@@ -59,5 +103,26 @@ public class PimController {
             // return projectService.findByNameWithQueryDSL(name);
         }
         return null;
+    }
+
+    @RequestMapping("/checkprojectid")
+    @ResponseBody
+    String projectExists(@RequestParam("projectid") Long id) {
+        try {
+            projectService.checkIdProjectExits(id);
+            return "success";
+        } catch (ProjectNumberAlreadyExistsException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
+    @InitBinder("project")
+    public void customizeBinding(WebDataBinder binder) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormatter.setLenient(false);
+        binder.registerCustomEditor(Date.class, "startDate", new CustomDateEditor(dateFormatter, true));
+        binder.registerCustomEditor(Date.class, "endDate", new CustomDateEditor(dateFormatter, true));
     }
 }

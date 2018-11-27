@@ -2,10 +2,12 @@ package vn.elca.training.entities;
 
 public class Group extends Version {
     private Long groupLeaderId;
+    private String name;
 
-    public Group(Long id, int version, Long groupLeaderId) {
+    public Group(Long id, int version, Long groupLeaderId, String name) {
         super(id, version);
         this.groupLeaderId = groupLeaderId;
+        this.name = name;
     }
 
     @Override
@@ -38,5 +40,13 @@ public class Group extends Version {
 
     public void setGroupLeaderId(Long groupLeaderId) {
         this.groupLeaderId = groupLeaderId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
