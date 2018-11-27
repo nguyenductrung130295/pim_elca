@@ -84,7 +84,6 @@ public class PimController {
     }
 
     @RequestMapping("/error")
-    @ResponseBody
     String errorPage() {
         return "errorpage";
     }
