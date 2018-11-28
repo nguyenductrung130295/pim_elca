@@ -99,3 +99,15 @@ label{
 #error_number_project{
   display:none;
 }
+.table{
+  margin-bottom:0px;
+}
+#footer-table{
+  border:1px solid #ddd;
+  background-color:#d7f5f9;
+  margin-bottom:20px;
+  padding:10px;
+}
+#pagin{
+  margin-top:20px;
+}

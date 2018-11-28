@@ -24,8 +24,8 @@
   <div class="col-md-5"></div>
   <div class="col-md-7">
    <br><br>
-    <a href="#" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
-    <a href="#" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
+    <a th:href="@{list}" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
+    <a th:href="@{new}" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
     <a href="#" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
     <a th:text="#{label.menu.customer}"></a><br><br>
     <a th:text="#{label.menu.supplier}"></a><br><br>
@@ -135,7 +135,7 @@
   <div class="row text-right">
     <div class="col-md-5"></div>
     <div class="col-md-3">
-      <button class="btn btn-default btn-block" th:text="#{button.cancel}"></button>
+      <a class="btn btn-default btn-block" th:href="@{list}" th:text="#{button.cancel}"></a>
     </div>
     <div class="col-md-1"></div>
     <div class="col-md-3">

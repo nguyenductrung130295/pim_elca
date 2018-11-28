@@ -1,5 +1,6 @@
 package vn.elca.training.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import vn.elca.training.entities.Project;
 import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
+import vn.elca.training.utils.ProjectStatusEnum;
 
 @Service
 public class ProjectServiceImp implements IProjectService {
@@ -26,9 +28,23 @@ public class ProjectServiceImp implements IProjectService {
     }
 
     @Override
-    public List<Project> findProjectByQuery(String queryStr) {
+    public List<Project> findProjectByQuery(String queryStr, String queryStatus) {
         // TODO Auto-generated method stub
-        return projectDao.projectByQuery(queryStr);
+        List<Project> listResult = new ArrayList<>();
+        if ("".equals(queryStr)) {
+            if ("".equals(queryStatus)) {
+                listResult = projectDao.getProjectAll();
+            } else {
+                listResult = projectDao.projectByQuery(ProjectStatusEnum.getProjectStatusByCode(queryStatus));
+            }
+        } else {
+            if ("".equals(queryStatus)) {
+                listResult = projectDao.projectByQuery(queryStr);
+            } else {
+                listResult = projectDao.projectByQuery(queryStr, ProjectStatusEnum.getProjectStatusByCode(queryStatus));
+            }
+        }
+        return listResult;
     }
 
     @Override
@@ -52,8 +68,20 @@ public class ProjectServiceImp implements IProjectService {
     }
 
     @Override
-    public boolean checkIdProjectExits(Long id) throws ProjectNumberAlreadyExistsException {
+    public List<Integer> delteProjectNumberList(int[] listNumber) {
         // TODO Auto-generated method stub
-        return projectDao.checkId(id);
+        List<Integer> error = new ArrayList<>();
+        for (int num : listNumber) {
+            if (projectDao.deleteByNumberProject(num) == false) {
+                error.add(num);
+            }
+        }
+        return error;
+    }
+
+    @Override
+    public void checkProjectNumberExits(Long number) throws ProjectNumberAlreadyExistsException {
+        // TODO Auto-generated method stub
+        projectDao.checkNumber(number);
     }
 }

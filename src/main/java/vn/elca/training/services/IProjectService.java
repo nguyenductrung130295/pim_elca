@@ -10,7 +10,7 @@ public interface IProjectService {
 
     List<Project> findProjectAll();
 
-    List<Project> findProjectByQuery(String queryStr);
+    List<Project> findProjectByQuery(String queryStr, String queryStatus);
 
     int createProject(Project project);
 
@@ -18,5 +18,7 @@ public interface IProjectService {
 
     void deleteProjectById(Long id);
 
-    boolean checkIdProjectExits(Long id) throws ProjectNumberAlreadyExistsException;
+    List<Integer> delteProjectNumberList(int[] listNumber);
+
+    void checkProjectNumberExits(Long projectNumber) throws ProjectNumberAlreadyExistsException;
 }

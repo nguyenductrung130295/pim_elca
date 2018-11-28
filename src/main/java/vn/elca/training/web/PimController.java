@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,18 +28,20 @@ import vn.elca.training.services.IProjectService;
 import vn.elca.training.utils.AppUtils;
 
 @Controller("project")
-@SessionAttributes("strQuery")
+@SessionAttributes({ "strQuery", "statusQuery" })
 @RequestMapping("/project")
 public class PimController {
     @Autowired
     IProjectService projectService;
     @Autowired
     IGroupService groupService;
+    private static String textQueryStore = "";
+    private static String statusQueryStore = "";
 
     @RequestMapping("/")
     @ResponseBody
     String test() {
-        return "lkasjdlkfas";
+        return "please access localhost:/8080/project/list";
     }
 
     @RequestMapping("/new")
@@ -90,25 +93,40 @@ public class PimController {
 
     @RequestMapping("/list")
     ModelAndView listProject() {
-        return new ModelAndView("list", "projectList", projectService.findProjectAll());
+        if ("".equals(textQueryStore) && "".equals(statusQueryStore)) {
+            return new ModelAndView("list", "projectList", projectService.findProjectAll());
+        } else {
+            return new ModelAndView("list", "projectList",
+                    projectService.findProjectByQuery(textQueryStore, statusQueryStore));
+        }
     }
 
-    @RequestMapping("/query")
-    @ResponseBody
-    List<Project> query(@RequestParam(value = "name") String name) {
-        if ("".equals(name)) {
-            // return projectService.findAll();
-        } else {
-            // return projectService.findByNameWithQueryDSL(name);
-        }
-        return null;
+    @PostMapping("/query")
+    ModelAndView query(@RequestParam(value = "text_search") String strQuery,
+            @RequestParam(value = "status_search") String statusQuery) {
+        // System.out.println(">>>>>>>>>>>>>>>Session str query : " + strQuery + ":::" + statusQuery);
+        textQueryStore = strQuery;
+        statusQueryStore = statusQuery;
+        return new ModelAndView("list", "projectList", projectService.findProjectByQuery(strQuery, statusQuery))
+                .addObject("strQuery", strQuery).addObject("statusQuery", statusQuery);
+    }
+
+    @GetMapping("/query")
+    String queryreset(@RequestParam(value = "text_search") String strQuery,
+            @RequestParam(value = "status_search") String statusQuery, Model model) {
+        // System.out.println(">>>>>>>>>>>>>>>Session str query : " + strQuery + ":::" + statusQuery);
+        textQueryStore = strQuery;
+        statusQueryStore = statusQuery;
+        model.addAttribute("strQuery", "");
+        model.addAttribute("statusQuery", "");
+        return "redirect:list";
     }
 
     @RequestMapping("/checkprojectid")
     @ResponseBody
-    String projectExists(@RequestParam("projectid") Long id) {
+    String projectExists(@RequestParam("project_number") Long projectNumber) {
         try {
-            projectService.checkIdProjectExits(id);
+            projectService.checkProjectNumberExits(projectNumber);
             return "success";
         } catch (ProjectNumberAlreadyExistsException e) {
             // TODO Auto-generated catch block
@@ -123,5 +141,11 @@ public class PimController {
         dateFormatter.setLenient(false);
         binder.registerCustomEditor(Date.class, "startDate", new CustomDateEditor(dateFormatter, true));
         binder.registerCustomEditor(Date.class, "endDate", new CustomDateEditor(dateFormatter, true));
+    }
+
+    @RequestMapping("/delete")
+    @ResponseBody
+    List<Integer> deleteListProject(@RequestParam("list_number[]") int[] projectNumberList) {
+        return projectService.delteProjectNumberList(projectNumberList);
     }
 }
