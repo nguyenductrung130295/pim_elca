@@ -13,9 +13,9 @@ public interface IProjectDaoService {
 
     int update(Project project);
 
-    int create(Project project);
+    boolean create(Project project);
 
-    void delete(Long id);
+    boolean delete(Long id);
 
     List<Project> projectByQuery(String query, ProjectStatusEnum status);
 
@@ -23,7 +23,7 @@ public interface IProjectDaoService {
 
     List<Project> projectByQuery(ProjectStatusEnum status);
 
-    void checkNumber(Long number) throws ProjectNumberAlreadyExistsException;
+    void checkNumber(int number) throws ProjectNumberAlreadyExistsException;
 
     boolean deleteByNumberProject(int num);
 }

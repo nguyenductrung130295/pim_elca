@@ -12,13 +12,13 @@ public interface IProjectService {
 
     List<Project> findProjectByQuery(String queryStr, String queryStatus);
 
-    int createProject(Project project);
+    boolean createProject(Project project);
 
     int updateProject(Project project);
 
-    void deleteProjectById(Long id);
+    boolean deleteProjectById(Long id);
 
     List<Integer> delteProjectNumberList(int[] listNumber);
 
-    void checkProjectNumberExits(Long projectNumber) throws ProjectNumberAlreadyExistsException;
+    void checkProjectNumberExits(int i) throws ProjectNumberAlreadyExistsException;
 }

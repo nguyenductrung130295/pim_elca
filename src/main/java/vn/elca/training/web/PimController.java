@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import vn.elca.training.entities.Project;
 import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
+import vn.elca.training.services.IEmployeeService;
 import vn.elca.training.services.IGroupService;
 import vn.elca.training.services.IProjectService;
 import vn.elca.training.utils.AppUtils;
@@ -30,13 +32,16 @@ import vn.elca.training.utils.AppUtils;
 @Controller("project")
 @SessionAttributes({ "strQuery", "statusQuery" })
 @RequestMapping("/project")
+@Scope("session")
 public class PimController {
     @Autowired
     IProjectService projectService;
     @Autowired
     IGroupService groupService;
-    private static String textQueryStore = "";
-    private static String statusQueryStore = "";
+    @Autowired
+    StoreSessionValue sessionValue;
+    @Autowired
+    IEmployeeService employeeService;
 
     @RequestMapping("/")
     @ResponseBody
@@ -57,15 +62,26 @@ public class PimController {
     String createProject(@ModelAttribute("project") Project project,
             @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
         System.out.println("#######Create method invoked: " + project.getStatus() + " ######VISA:" + listMemberVISA);
-        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project)) {
+        boolean existNumber;
+        try {
+            projectService.checkProjectNumberExits(project.getProjectNumber());
+            existNumber = false;
+        } catch (ProjectNumberAlreadyExistsException e) {
+            // TODO Auto-generated catch block
+            // e.printStackTrace();
+            System.out.println("EXIST PROJECT NUMBER");
+            existNumber = true;
+        }
+        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || existNumber) {
             model.addAttribute("errorValidate", "true");
             model.addAttribute("listMember", "");// ????????????????????????
             model.addAttribute("type", "new");
+            model.addAttribute("existProject", existNumber);
             model.addAttribute("groupProject", groupService.getAllGroup());
             return "new";
         }
         project.setId(Long.valueOf(project.getProjectNumber()));// ?????NOTE:whatelksdjfalksjfdlaksjdflaksjdlk
-        if (projectService.createProject(project) == 0) {
+        if (!projectService.createProject(project)) {
             return "redirect:error";
         }
         return "redirect:list";
@@ -93,11 +109,11 @@ public class PimController {
 
     @RequestMapping("/list")
     ModelAndView listProject() {
-        if ("".equals(textQueryStore) && "".equals(statusQueryStore)) {
+        if ("".equals(sessionValue.getTextQuery()) && "".equals(sessionValue.getStatusQuery())) {
             return new ModelAndView("list", "projectList", projectService.findProjectAll());
         } else {
             return new ModelAndView("list", "projectList",
-                    projectService.findProjectByQuery(textQueryStore, statusQueryStore));
+                    projectService.findProjectByQuery(sessionValue.getTextQuery(), sessionValue.getStatusQuery()));
         }
     }
 
@@ -105,8 +121,8 @@ public class PimController {
     ModelAndView query(@RequestParam(value = "text_search") String strQuery,
             @RequestParam(value = "status_search") String statusQuery) {
         // System.out.println(">>>>>>>>>>>>>>>Session str query : " + strQuery + ":::" + statusQuery);
-        textQueryStore = strQuery;
-        statusQueryStore = statusQuery;
+        sessionValue.setTextQuery(strQuery);
+        sessionValue.setStatusQuery(statusQuery);
         return new ModelAndView("list", "projectList", projectService.findProjectByQuery(strQuery, statusQuery))
                 .addObject("strQuery", strQuery).addObject("statusQuery", statusQuery);
     }
@@ -115,8 +131,8 @@ public class PimController {
     String queryreset(@RequestParam(value = "text_search") String strQuery,
             @RequestParam(value = "status_search") String statusQuery, Model model) {
         // System.out.println(">>>>>>>>>>>>>>>Session str query : " + strQuery + ":::" + statusQuery);
-        textQueryStore = strQuery;
-        statusQueryStore = statusQuery;
+        sessionValue.setTextQuery(strQuery);
+        sessionValue.setStatusQuery(statusQuery);
         model.addAttribute("strQuery", "");
         model.addAttribute("statusQuery", "");
         return "redirect:list";
@@ -124,13 +140,13 @@ public class PimController {
 
     @RequestMapping("/checkprojectid")
     @ResponseBody
-    String projectExists(@RequestParam("project_number") Long projectNumber) {
+    String projectExists(@RequestParam("project_number") int projectNumber) {
         try {
             projectService.checkProjectNumberExits(projectNumber);
             return "success";
         } catch (ProjectNumberAlreadyExistsException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            // e.printStackTrace();
             return "error";
         }
     }
@@ -143,9 +159,34 @@ public class PimController {
         binder.registerCustomEditor(Date.class, "endDate", new CustomDateEditor(dateFormatter, true));
     }
 
-    @RequestMapping("/delete")
+    @PostMapping("/delallselect")
     @ResponseBody
     List<Integer> deleteListProject(@RequestParam("list_number[]") int[] projectNumberList) {
         return projectService.delteProjectNumberList(projectNumberList);
+    }
+
+    @RequestMapping("/delete")
+    @ResponseBody
+    String deleteProject(@RequestParam("idproject") Long idProject) {
+        if (projectService.deleteProjectById(idProject)) {
+            return "success";
+        } else {
+            return "fail";
+        }
+    }
+
+    @PostMapping("/checkvisa")
+    @ResponseBody
+    String checkVisa(@RequestParam("list_visa[]") String[] visa) {
+        String result = "";
+        for (int i = 0; i < visa.length; i++) {
+            if (!employeeService.checkedEmployee(visa[i])) {
+                result += visa[i] + ",";
+            }
+        }
+        if (result.length() > 4) {
+            result.substring(0, result.length() - 2);
+        }
+        return result;
     }
 }

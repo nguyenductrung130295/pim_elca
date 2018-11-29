@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<meta charset="UTF-8">
 <link rel="stylesheet" th:href="@{/css/bootstrap.css}" >
 <link rel="stylesheet" href="/css/mycss.css" >
 </head>
@@ -15,8 +16,8 @@
           <h3><strong th:text="#{label.project_name}"></strong></h3>
       </div>
     </div>
-    <div class="col-md-4 text-right pad-right40 mar-top25"> EN | <a href="#" id="fr_lang" class="new-menu-style">FR</a></div>
-    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style" th:text="#{laebl.help}"></a>&nbsp&nbsp&nbsp&nbsp&nbsp Log out</div>
+    <div class="col-md-4 text-right pad-right40 mar-top25"> <a href="#" id="en_lang" class="new-menu-style">EN</a> | <a href="#" id="fr_lang" class="new-menu-style">FR</a></div>
+    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style" th:text="#{laebl.help}"></a><a th:text="#{label.logout}" style="margin-left:20px"></a></div>
     
   </div>
 </header>
@@ -25,10 +26,10 @@
   <div class="col-md-5"></div>
   <div class="col-md-7">
     <br><br>
-    <a th:href="@{list}" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
-    <a th:href="@{new}" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
-    <a href="#" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
-    <a th:text="#{label.menu.customer}"></a><br><br>
+    <a th:href="@{/project/list}" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
+    <a th:href="@{/project/new}" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
+    <a th:href="@{/project/list}" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
+    <a th:href="@{/customer/list}" th:text="#{label.menu.customer}"></a><br><br>
     <a th:text="#{label.menu.supplier}"></a><br><br>
   </div>
   
@@ -91,7 +92,7 @@
           <td th:text="${proj.customer}"></td>
           <td th:text="${#dates.format(proj.startDate,'yyyy-MM-dd')}"></td>
           <td class="text-center">
-            <center><img src="/img/delete_icon.png" style="display:none"/></center>
+            <a th:if="${#strings.toString(proj.status) == 'NEW'}" th:id="${proj.id}" th:title="${proj.name}" th:onclick="deleteItem(this,this.id,this.title)"><img src="/img/delete_icon.png"/></a>
           </td>
         </tr>
     </th:foreach>

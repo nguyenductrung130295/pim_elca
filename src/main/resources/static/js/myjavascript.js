@@ -1,6 +1,10 @@
 $("#fr_lang").click(function(){
 	console.log("french");
-	window.location.replace('?lang=vi');
+	window.location.replace('?lang=fr');
+});
+$("#en_lang").click(function(){
+	console.log("english");
+	window.location.replace('?lang=en');
 });
 $("#btn_reset_search").click(function(){
 	$("#text-search").val("");
@@ -15,7 +19,7 @@ $("#select_status").change(function(){
 
 $(".checkbox-cus").change(function(){
 	var checkedItems = countChecked($(".checkbox-cus"));
-	showBincycle();
+	//showBincycle();
 	if(checkedItems>0){
 		$("#counter_select").text(checkedItems);
 		$("#footer-table").show();
@@ -46,8 +50,9 @@ function countChecked(checkbox){
 }
 
 $("#btn_delete").click(function(){
-	var conf = confirm("Delete items selected.Are you sure?");
+	var conf = confirm("Delete all items selected.Are you sure?");
 	if(conf){
+		$("#footer-table").hide();
 		var list = [];
 		var checkboxs = $(".checkbox-cus");
 		for(var i=0;i<checkboxs.length;i++){
@@ -57,7 +62,7 @@ $("#btn_delete").click(function(){
 			}
 		}
 		$.ajax({
-			url:"delete",
+			url:"delallselect",
 			method:"post",
 			data:{
 				list_number:list
@@ -82,30 +87,135 @@ $("#btn_delete").click(function(){
 	}
 })
 
+$("#pro_enddate").keyup(function(){
+	if($("#pro_enddate").val().length == 10 && $("#pro_startdate").val().length == 10){
+		var date_start = new Date($("#pro_startdate").val());
+		var date_end = new Date($("#pro_enddate").val());
+		if(date_end < date_start){
+			$("#pro_startdate").val($("#pro_enddate").val());//start = end
+		}
+		console.log("lksfjlkasjdflksajdlfksajdfs");
+	}
+})
+
+$("#pro_startdate").keyup(function(){
+	if($("#pro_enddate").val().length == 10 && $("#pro_startdate").val().length == 10){
+		var date_start = new Date($("#pro_startdate").val());
+		var date_end = new Date($("#pro_enddate").val());
+		if(date_end < date_start){
+			$("#pro_enddate").val($("#pro_startdate").val());//end = start
+		}
+		console.log("lksfjlkasjdflksajdlfksajdfsAAAAAAAAAA");
+	}
+})
+
+function hightlighError(){
+	var error = $("#have_errors").val();
+	if(error){
+		if($("#pro_num").val() === ""){
+			$("#pro_num").css("border-color","red");
+		}
+		if($("#pro_name").val() === ""){
+			$("#pro_name").css("border-color","red");
+		}
+		if($("#pro_customer").val() === ""){
+			$("#pro_customer").css("border-color","red");
+		}
+		if($("#pro_group").val() === ""){
+			$("#pro_group").css("border-color","red");
+		}
+		
+		if($("#pro_status").val() === ""){
+			$("#pro_status").css("border-color","red");
+		}
+		if($("#pro_startdate").val() === ""){
+			$("#pro_startdiv").css("border-color","red");
+		}
+		if($("#pro_enddate").val() === ""){
+			$("#pro_enddiv").css("border-color","red");
+		}
+		var existError = $("#sumit_exists");
+		if(existError.val()){
+			$("#pro_num").css("border-color","red");
+			$("#error_number_project").show();
+		}
+	}
+}
+
+function deleteItem(aTag, idProject, nameProject){
+	if(confirm("Delete project name:" + nameProject +". Are you sure?")){
+		$.ajax({
+			url:"/project/delete",
+			method:"post",
+			data:{
+				idproject:idProject
+			},
+			success:function(data){
+				if(data==="success"){
+					aTag.parentNode.parentNode.remove();
+				}else{
+					console.log("error delete item" +nameProject);
+				}
+			},
+			error:function(){
+				console.log("error request");
+			}
+		})
+	}
+}
+
+$("#pro_member").keyup(function(){
+	var list = $("#pro_member").val().split(",");
+	$.ajax({url:"checkvisa",
+		method:"post",
+		data:{
+			list_visa:list
+		},
+		success:function(data){
+			if(data!==""){
+				$("#list_visa_er").val(data);
+				$("#error_member").show();
+			}else{
+				$("#error_member").hide();
+			}
+		},
+		error:function(){
+			
+		}
+	})
+})
 
 $(document).ready(function(){
 	console.log("read document");
 	$("#select_status").val($("#searchStatusQuery").val());
-	$("#pro_num").change(function(){
+	$("#pro_num").keyup(function(){
 		console.log("changed pro_num");
-		$.ajax({
-			url:"checkprojectid",
-			data:{
-				project_number : $("#pro_num").val()
-			},
-			error:function(){
-				console.log("error ajax check id");
-			},
-			success:function(data){
-				console.log("data: "+data);
-				if(data ==='success'){
-					$("#error_number_project").hide();
-					$("#pro_num").css("border-color","#ccc");
-				}else if(data === 'error'){
-					$("#pro_num").css("border-color","red");
-					$("#error_number_project").show();
+		if($("#pro_num").val()!==""){
+			$.ajax({
+				url:"checkprojectid",
+				data:{
+					project_number : $("#pro_num").val()
+				},
+				error:function(){
+					console.log("error ajax check id");
+				},
+				success:function(data){
+					console.log("data: "+data);
+					if(data ==='success'){
+						$("#error_number_project").hide();
+						$("#pro_num").css("border-color","#ccc");
+					}else if(data === 'error'){
+						$("#pro_num").css("border-color","red");
+						$("#error_number_project").show();
+					}
 				}
-			}
-		})
+			})
+		}else{
+			$("#error_number_project").hide();
+			$("#pro_num").css("border-color","#ccc");
+		}
+		
 	});
+	hightlighError();
+
 })

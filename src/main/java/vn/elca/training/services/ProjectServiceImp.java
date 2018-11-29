@@ -48,7 +48,7 @@ public class ProjectServiceImp implements IProjectService {
     }
 
     @Override
-    public int createProject(Project project) {
+    public boolean createProject(Project project) {
         // TODO Auto-generated method stub
         return projectDao.create(project);
         // return 0;
@@ -62,9 +62,9 @@ public class ProjectServiceImp implements IProjectService {
     }
 
     @Override
-    public void deleteProjectById(Long id) {
+    public boolean deleteProjectById(Long id) {
         // TODO Auto-generated method stub
-        projectDao.delete(id);
+        return projectDao.delete(id);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ProjectServiceImp implements IProjectService {
     }
 
     @Override
-    public void checkProjectNumberExits(Long number) throws ProjectNumberAlreadyExistsException {
+    public void checkProjectNumberExits(int number) throws ProjectNumberAlreadyExistsException {
         // TODO Auto-generated method stub
         projectDao.checkNumber(number);
     }
