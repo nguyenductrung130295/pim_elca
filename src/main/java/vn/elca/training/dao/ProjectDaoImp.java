@@ -119,6 +119,7 @@ public class ProjectDaoImp implements IProjectDaoService {
     public void checkNumber(int number) throws ProjectNumberAlreadyExistsException {
         for (Project p : list) {
             if (p.getProjectNumber() == (number)) {
+                System.out.println(p.getProjectNumber() + "hhhhhhhhhhh:" + number);
                 throw new ProjectNumberAlreadyExistsException("The projet number already existed.");
             }
         }

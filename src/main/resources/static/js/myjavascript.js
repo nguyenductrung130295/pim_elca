@@ -131,13 +131,15 @@ function hightlighError(){
 		if($("#pro_startdate").val() === ""){
 			$("#pro_startdiv").css("border-color","red");
 		}
-		if($("#pro_enddate").val() === ""){
-			$("#pro_enddiv").css("border-color","red");
-		}
+		
 		var existError = $("#sumit_exists");
-		if(existError.val()){
+		console.log(existError.val());
+		if(existError.val()==="true"){
 			$("#pro_num").css("border-color","red");
 			$("#error_number_project").show();
+		}else{
+			$("#pro_num").css("border-color","#ddd");
+			$("#error_number_project").hide();
 		}
 	}
 }
@@ -166,14 +168,24 @@ function deleteItem(aTag, idProject, nameProject){
 
 $("#pro_member").keyup(function(){
 	var list = $("#pro_member").val().split(",");
+	var list_actual = [];
+	for(var i in list){
+		if(list[i].length>0){
+			list_actual.push(list[i]);
+		}
+	}
+	if(list_actual.length==0){
+		return;
+	}
 	$.ajax({url:"checkvisa",
 		method:"post",
 		data:{
-			list_visa:list
+			list_visa:list_actual
 		},
 		success:function(data){
 			if(data!==""){
-				$("#list_visa_er").val(data);
+				console.log(data);
+				$("#list_visa_er").text(data);
 				$("#error_member").show();
 			}else{
 				$("#error_member").hide();
@@ -204,9 +216,11 @@ $(document).ready(function(){
 					if(data ==='success'){
 						$("#error_number_project").hide();
 						$("#pro_num").css("border-color","#ccc");
+						 $("#sumit_exists").val("false");
 					}else if(data === 'error'){
 						$("#pro_num").css("border-color","red");
 						$("#error_number_project").show();
+						$("#sumit_exists").val("true");
 					}
 				}
 			})

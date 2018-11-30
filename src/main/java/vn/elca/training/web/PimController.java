@@ -67,11 +67,11 @@ public class PimController {
             projectService.checkProjectNumberExits(project.getProjectNumber());
             existNumber = false;
         } catch (ProjectNumberAlreadyExistsException e) {
-            // TODO Auto-generated catch block
             // e.printStackTrace();
             System.out.println("EXIST PROJECT NUMBER");
             existNumber = true;
         }
+        System.out.println("-------------------<<>>:" + existNumber);
         if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || existNumber) {
             model.addAttribute("errorValidate", "true");
             model.addAttribute("listMember", "");// ????????????????????????
@@ -120,7 +120,6 @@ public class PimController {
     @PostMapping("/query")
     ModelAndView query(@RequestParam(value = "text_search") String strQuery,
             @RequestParam(value = "status_search") String statusQuery) {
-        // System.out.println(">>>>>>>>>>>>>>>Session str query : " + strQuery + ":::" + statusQuery);
         sessionValue.setTextQuery(strQuery);
         sessionValue.setStatusQuery(statusQuery);
         return new ModelAndView("list", "projectList", projectService.findProjectByQuery(strQuery, statusQuery))
@@ -130,7 +129,6 @@ public class PimController {
     @GetMapping("/query")
     String queryreset(@RequestParam(value = "text_search") String strQuery,
             @RequestParam(value = "status_search") String statusQuery, Model model) {
-        // System.out.println(">>>>>>>>>>>>>>>Session str query : " + strQuery + ":::" + statusQuery);
         sessionValue.setTextQuery(strQuery);
         sessionValue.setStatusQuery(statusQuery);
         model.addAttribute("strQuery", "");
@@ -184,8 +182,8 @@ public class PimController {
                 result += visa[i] + ",";
             }
         }
-        if (result.length() > 4) {
-            result.substring(0, result.length() - 2);
+        if (result.length() > 1) {
+            result = result.substring(0, result.length() - 1);
         }
         return result;
     }

@@ -3,8 +3,10 @@
 <head>
 <link rel="stylesheet" href="/css/bootstrap.css" >
 <link rel="stylesheet" href="/css/mycss.css" >
+<title th:if="${type=='new'}" th:text="#{label.title.project_new}"></title>
+<title th:if="${type=='edit'}" th:text="#{label.title.project_edit}"></title>
 </head>
-<body id="body">
+<body id="body" class="container-fluid">
 <header id="header">
   <div class="row">
     <div class="col-md-6">
@@ -43,11 +45,11 @@
   </div>
   <form class="form-horizontal mar-lef20" th:action="${type=='new'?'create':'update'}" th:object="${project}" method="post">
     <div class="form-group pad-top-bot10">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="pro_num"><span th:text="#{project.project_number}"></span> <span class="mandatory">*</span></label>
       </div>
-      <div class="col-md-3">
-        <input type="number" maxlength="4" required="required" id="pro_num" th:field="*{projectNumber}" th:readonly="${type=='edit'?true:false}" class="form-control in-txt-cus">
+      <div class="col-md-4">
+        <input type="number" max="9999" min="0" required="required" id="pro_num" autofocus th:field="*{projectNumber}" th:readonly="${type=='edit'?true:false}" class="form-control in-txt-cus">
       </div>
       <div class="col-md-6">
         <input id="sumit_exists" type="hidden" th:value="${existProject}">
@@ -55,26 +57,26 @@
       </div>
     </div>
     <div class="form-group pad-top-bot10">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="pro_name"><span th:text="#{project.project_name}"></span><span class="mandatory">*</span></label>
       </div>
-      <div class="col-md-9">
+      <div class="col-md-10">
       <input type="text" id="pro_name" maxlength="50" th:field="*{name}" class="form-control in-txt-cus">
       </div>
     </div>
     <div class="form-group pad-top-bot10">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="pro_customer"><span th:text="#{project.customer}"></span><span class="mandatory">*</span></label>
       </div>
-      <div class="col-md-9">
+      <div class="col-md-10">
       <input type="text" id="pro_customer" maxlength="50" th:field="*{customer}" class="form-control in-txt-cus">
       </div>
     </div>
     <div class="form-group pad-top-bot10">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="pro_group"><span th:text="#{project.group}"></span><span class="mandatory">*</span></label>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <select class="form-control in-txt-cus" style="font-size:12px;" id="pro_group" th:field="*{groupId}">
           <option value="" selected th:text="#{project.group}"></option>
           <th:foreach  th:each="gr : ${groupProject}">
@@ -84,21 +86,21 @@
       </div>
     </div>
     <div class="form-group pad-top-bot10">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="pro_member"  th:text="#{project.member}"></label>
       </div>
-      <div class="col-md-9">
+      <div class="col-md-10">
         <input type="text" id="pro_member" name="project_member" th:value="${listMember}" class="form-control in-txt-cus">
         <div class="mandatory" id="error_member" style="display:none">
-        <span th:text="#{error.membernotxists}"></span><span>:{</span><span id="list_visa_er"></span><span>}.</span>
+        <span th:text="#{error.membernotxists}"></span><span>: {</span><span id="list_visa_er"></span><span>}.</span>
         </div>        
       </div>
     </div>
     <div class="form-group pad-top-bot10">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="pro_status"><span th:text="#{project.status}"></span> <span class="mandatory">*</span></label>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <select class="form-control in-txt-cus" id="pro_status" style="font-size:12px;" th:field="*{status}">
           <option value="NEW" th:text="#{project.status.new}" selected></option>
           <option value="PLA" th:text="#{project.status.planned}"></option>
@@ -108,36 +110,40 @@
       </div>
     </div>
     <div class="form-group pad-top-bot10">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <label for="pro_startdate"><span th:text="#{project.start_date}"></span><span class="mandatory">*</span></label>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="form-control-cus in-txt-cus" id="pro_startdiv">
-          <input type="text" id="pro_startdate" th:field="*{startDate}" class="date-cus" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])">
+          <input type="text" id="pro_startdate" th:field="*{startDate}" class="date-cus" 
+          pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
           <a href="#"><img src="/img/u89.png"/></a>
         </div>
       
       </div>
     
-      <div class="col-md-3 text-center">
+      <div class="col-md-2 text-right">
         <label for="pro_enddate" th:text="#{project.end_date}"></label>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-4">
         <div class="form-control-cus in-txt-cus" id="pro_enddiv">
-          <input type="text" id="pro_enddate" th:field="*{endDate}" class="date-cus" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])">
+          <input type="text" id="pro_enddate" th:field="*{endDate}" class="date-cus"
+           pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))">
           <a href="#"><img src="/img/u89.png"/></a>
         </div>
       </div>
     </div>
     <hr>
   <div class="row text-right">
-    <div class="col-md-5"></div>
+    <div class="col-md-6"></div>
+    
     <div class="col-md-3">
       <a class="btn btn-default btn-block" th:href="@{/project/list}" th:text="#{button.cancel}"></a>
     </div>
-    <div class="col-md-1"></div>
+    
     <div class="col-md-3">
-      <input type="submit" class="btn btn-primary btn-block" th:value="#{button.project_create}">
+      <input type="submit" class="btn btn-primary btn-block" th:if="${type=='new'}" th:value="#{button.project_create}">
+      <input type="submit" class="btn btn-primary btn-block" th:if="${type=='edit'}" th:value="#{button.project_update}">
     </div>
   </div>
   </form>

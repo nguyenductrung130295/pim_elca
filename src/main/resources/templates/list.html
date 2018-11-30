@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" th:href="@{/css/bootstrap.css}" >
 <link rel="stylesheet" href="/css/mycss.css" >
+<title th:text="#{label.title.project_list}"></title>
 </head>
-<body id="body">
+<body id="body" class="container-fluid">
 <header id="header">
   <div class="row">
     <div class="col-md-6">
@@ -21,7 +22,7 @@
     
   </div>
 </header>
-<div class="row">
+<div>
 <div class="col-md-3" id="side-bar">
   <div class="col-md-5"></div>
   <div class="col-md-7">
@@ -40,7 +41,7 @@
   <hr>
   <form class="form-inline" id="form-search" th:action="@{query}" method="post">
     <div class="col-md-4-cus">
-      <input type="text" th:value="${strQuery}" name="text_search" class="form-control" id="text-search" th:placeholder="#{text.placeholder_search}">
+      <input type="text" th:value="${strQuery}" autofocus name="text_search" class="form-control" id="text-search" th:placeholder="#{text.placeholder_search}">
     </div>
     <input type="hidden" name="status_search" id="searchStatusQuery" th:value="${statusQuery}">
     <div class="col-md-2-cus" style="padding-left:8px;">
@@ -70,7 +71,7 @@
         <th class="col-md-4" th:text="#{project.name}"></th>
         <th class="col-md-1" th:text="#{project.status}"></th>
         <th class="col-md-3" th:text="#{project.customer}"></th>
-        <th class="col-md-2" th:text="#{project.start_date}"></th>
+        <th class="col-md-2 text-center" th:text="#{project.start_date}"></th>
         <th class="col-md-1 text-center" th:text="#{project.delete}"></th>
       </tr>
     </thead>
@@ -90,7 +91,7 @@
           <td th:if="${#strings.toString(proj.status) == 'FIN'}"><span th:text=#{project.status.finished}></span></td>
           
           <td th:text="${proj.customer}"></td>
-          <td th:text="${#dates.format(proj.startDate,'yyyy-MM-dd')}"></td>
+          <td th:text="${#dates.format(proj.startDate,'yyyy-MM-dd')}" class="text-center"></td>
           <td class="text-center">
             <a th:if="${#strings.toString(proj.status) == 'NEW'}" th:id="${proj.id}" th:title="${proj.name}" th:onclick="deleteItem(this,this.id,this.title)"><img src="/img/delete_icon.png"/></a>
           </td>
