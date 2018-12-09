@@ -19,17 +19,17 @@ public class ProjectDaoImp implements IProjectDaoService {
     public ProjectDaoImp() {
         System.out.println("-------DB: init project data starting");
         list.add(new Project(Long.valueOf("1"), 1, 1, "Project A", "Customer A", ProjectStatusEnum.NEW, new Date(),
-                new Date(), Long.valueOf(1)));
+                new Date()));
         list.add(new Project(Long.valueOf("2"), 2, 2, "Project B", "Customer C", ProjectStatusEnum.INP, new Date(),
-                new Date(), Long.valueOf(1)));
+                new Date()));
         list.add(new Project(Long.valueOf("3"), 3, 3, "Project C", "Customer B", ProjectStatusEnum.FIN, new Date(),
-                new Date(), Long.valueOf(1)));
+                new Date()));
         list.add(new Project(Long.valueOf("4"), 4, 4, "Project D", "Customer c", ProjectStatusEnum.NEW, new Date(),
-                new Date(), Long.valueOf(1)));
+                new Date()));
         list.add(new Project(Long.valueOf("5"), 5, 5, "Project E", "Customer B", ProjectStatusEnum.PLA, new Date(),
-                new Date(), Long.valueOf(1)));
+                new Date()));
         list.add(new Project(Long.valueOf("6"), 6, 6, "Project F", "Customer A", ProjectStatusEnum.NEW, new Date(),
-                new Date(), Long.valueOf(1)));
+                new Date()));
         System.out.println("-------DB: init project data done");
     }
 
