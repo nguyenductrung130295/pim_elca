@@ -1,10 +1,12 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<meta charset="UTF-8">
 <link rel="stylesheet" th:href="@{/css/bootstrap.css}" >
 <link rel="stylesheet" href="/css/mycss.css" >
+<title th:text="#{label.title.project_list}"></title>
 </head>
-<body id="body">
+<body id="body" class="container-fluid">
 <header id="header">
   <div class="row">
     <div class="col-md-6">
@@ -15,34 +17,35 @@
           <h3><strong th:text="#{label.project_name}"></strong></h3>
       </div>
     </div>
-    <div class="col-md-4 text-right pad-right40 mar-top25"> EN | <a href="#" id="fr_lang" class="new-menu-style">FR</a></div>
-    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style" th:text="#{laebl.help}"></a>&nbsp&nbsp&nbsp&nbsp&nbsp Log out</div>
+    <div class="col-md-4 text-right pad-right40 mar-top25"> <a href="#" id="en_lang" class="new-menu-style">EN</a> | <a href="#" id="fr_lang" class="new-menu-style">FR</a></div>
+    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style" th:text="#{laebl.help}"></a><a th:text="#{label.logout}" style="margin-left:20px"></a></div>
     
   </div>
 </header>
-<div class="row">
+<div>
 <div class="col-md-3" id="side-bar">
   <div class="col-md-5"></div>
   <div class="col-md-7">
     <br><br>
-    <a href="#" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
-    <a href="#" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
-    <a href="#" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
-    <a th:text="#{label.menu.customer}"></a><br><br>
+    <a th:href="@{/project/list}" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
+    <a th:href="@{/project/new}" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
+    <a th:href="@{/project/list}" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
+    <a th:href="@{/customer/list}" th:text="#{label.menu.customer}"></a><br><br>
     <a th:text="#{label.menu.supplier}"></a><br><br>
   </div>
   
 </div>
 <div class="col-md-8" id="main-content">
 <br>
-  <h4 th:text="#{label.title.project_new}"></h4>
+  <h4 th:text="#{label.title.project_list}"></h4>
   <hr>
-  <form class="form-inline" id="form-search">
+  <form class="form-inline" id="form-search" th:action="@{query}" method="post">
     <div class="col-md-4-cus">
-      <input type="text" class="form-control" id="text-search" th:placeholder="#{text.placeholder_search}">
+      <input type="text" th:value="${strQuery}" autofocus name="text_search" class="form-control" id="text-search" th:placeholder="#{text.placeholder_search}">
     </div>
+    <input type="hidden" name="status_search" id="searchStatusQuery" th:value="${statusQuery}">
     <div class="col-md-2-cus" style="padding-left:8px;">
-      <select class="form-control">
+      <select class="form-control" id="select_status">
         <option value="" th:text="#{label.title.project_status}"></option>
         <option value="NEW" th:text="#{project.status.new}"></option>
         <option value="PLA" th:text="#{project.status.planned}"></option>
@@ -54,7 +57,7 @@
       <input type="submit" th:value="#{button.search_project}" class="btn btn-primary" style="width:70%;">
     </div>
     <div class="col-md-2-cus" style="padding-top:5px;">
-      <a href="#" th:text="#{button.search_reset}"></a>
+      <a id="btn_reset_search" th:text="#{button.search_reset}"></a>
     </div>
   </form>
   <br>
@@ -65,87 +68,47 @@
       <tr>
         <th></th>
         <th class="col-md-1 text-center" th:text="#{project.number}"></th>
-        <th class="col-md-5" th:text="#{project.name}"></th>
+        <th class="col-md-4" th:text="#{project.name}"></th>
         <th class="col-md-1" th:text="#{project.status}"></th>
         <th class="col-md-3" th:text="#{project.customer}"></th>
-        <th class="col-md-1 text-center" th:text="#{project.start_date}"></th>
+        <th class="col-md-2 text-center" th:text="#{project.start_date}"></th>
         <th class="col-md-1 text-center" th:text="#{project.delete}"></th>
       </tr>
     </thead>
     <tbody>
+    <th:foreach th:each="proj : ${projectList}">
       <tr>
-        <td class="text-center">
-          <input type="checkbox" class="checkbox-cus">
-        </td>
-        <td class="text-right">
-          3116
-        </td>
-        <td>
-          Facturation
-        </td>
-        <td>
-          New
-        </td>
-        <td>
-          Les retainers pro
-        </td>
-        <td class="text-center">
-          25.02.2004
-        </td>
-        <td class="text-center">
-          <a href="#"><img src="/img/delete_icon.png"/></a>
-        </td>
-      </tr>
-      
-      <tr>
-        <td class="text-center" style="width:30px;">
-          <input type="checkbox" class="checkbox-cus">
-        </td>
-        <td class="text-right">
-          3116
-        </td>
-        <td>
-          Facturation
-        </td>
-        <td>
-          New
-        </td>
-        <td>
-          Les retainers pro
-        </td>
-        <td class="text-center">
-          25.02.2004
-        </td>
-        <td class="text-center">
-          <a href="#"><img src="/img/delete_icon.png"/></a>
-        </td>
-      </tr>
-      <tr>
-        <td class="text-center" style="width:30px;">
-          <input type="checkbox" class="checkbox-cus">
-        </td>
-        <td class="text-right">
-          3116
-        </td>
-        <td>
-          Facturation
-        </td>
-        <td>
-          New
-        </td>
-        <td>
-          Les retainers pro
-        </td>
-        <td class="text-center">
-          25.02.2004
-        </td>
-        <td class="text-center">
-          <a href="#"><img src="/img/delete_icon.png"/></a>
-        </td>
-      </tr>
+          <td class="text-center">
+            <input type="checkbox" class="checkbox-cus" th:value="${proj.projectNumber}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
+          </td>
+          <td class="text-right"><a th:href="${proj.id}+'/edit'" th:text="${proj.projectNumber}"></a></td>
+          <td th:text="${proj.name}"></td>
+          <!-- <td th:text="${proj.status}"></td> -->
+          
+          <td th:if="${#strings.toString(proj.status) == 'NEW'}"><span th:text=#{project.status.new}></span></td>
+          <td th:if="${#strings.toString(proj.status) == 'PLA'}"><span th:text=#{project.status.planned}></span></td>
+          <td th:if="${#strings.toString(proj.status) == 'INP'}"><span th:text=#{project.status.in_progress}></span></td>
+          <td th:if="${#strings.toString(proj.status) == 'FIN'}"><span th:text=#{project.status.finished}></span></td>
+          
+          <td th:text="${proj.customer}"></td>
+          <td th:text="${#dates.format(proj.startDate,'yyyy-MM-dd')}" class="text-center"></td>
+          <td class="text-center">
+            <a th:if="${#strings.toString(proj.status) == 'NEW'}" th:id="${proj.id}" th:title="${proj.name}" th:onclick="deleteItem(this,this.id,this.title)"><img src="/img/delete_icon.png"/></a>
+          </td>
+        </tr>
+    </th:foreach>
     </tbody>
   </table>
-  <div class="text-right">
+  <div class="col-md-12" id="footer-table" style="display:none">
+    <div class="col-md-6 text-primary">
+      <strong id="counter_select"></strong> <strong th:text="#{notify.item.selected}"></strong>
+    </div>
+    <div class="col-md-6 text-right text-danger">
+      <a href="#" id="btn_delete"><strong class="text-danger" th:text="#{notify.item.delete}"></strong></a>
+      <img src="/img/delete_icon.png">  
+    </div>
+  </div>
+  <div id="pagin" class="text-right">
     <ul class="pagination">
     <li><a href="#">&lt&lt</a></li>
     <li><a href="#">1</a></li>

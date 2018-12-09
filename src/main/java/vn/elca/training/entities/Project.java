@@ -1,18 +1,42 @@
 package vn.elca.training.entities;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import vn.elca.training.utils.ProjectStatusEnum;
-
+@Entity
+@Table(name ="tbl_project")
 public class Project extends Version {
+	@Column(nullable = false)
     private int projectNumber;
+	@Column(nullable = false)
     private String name;
+	@Column(nullable = false)
     private String customer;
+    @Column(nullable = false)
     private ProjectStatusEnum status;
+    @Column(nullable = false)
     private Date startDate;
+    @Column(nullable = true)
     private Date endDate;
-
-    public Project() {
+   
+    private Group group;
+    
+    private Set<Employee> employees = new HashSet<>();
+    
+	public Project() {
         super();
     }
 
@@ -28,6 +52,8 @@ public class Project extends Version {
     }
 
     @Override
+    @Id
+    @GeneratedValue
     public Long getId() {
         // TODO Auto-generated method stub
         return super.getId();
@@ -40,6 +66,7 @@ public class Project extends Version {
     }
 
     @Override
+    @Column(nullable = false)
     public int getVersion() {
         // TODO Auto-generated method stub
         return super.getVersion();
@@ -98,4 +125,24 @@ public class Project extends Version {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="group_id")
+    public Group getGroup() {
+		return group;
+	}
+
+	public void setGroup(Group group) {
+		this.group = group;
+	}
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name="tbl_project_employee", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name ="employee_id"))
+	public Set<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(Set<Employee> employees) {
+		this.employees = employees;
+	}
+
+
 }

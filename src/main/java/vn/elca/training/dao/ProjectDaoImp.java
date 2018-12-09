@@ -3,10 +3,12 @@ package vn.elca.training.dao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import vn.elca.training.entities.Project;
+import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 import vn.elca.training.services.IProjectDaoService;
 import vn.elca.training.utils.ProjectStatusEnum;
 
@@ -33,13 +35,11 @@ public class ProjectDaoImp implements IProjectDaoService {
 
     @Override
     public List<Project> getProjectAll() {
-        // TODO Auto-generated method stub
         return list;
     }
 
     @Override
     public Project projectById(Long id) {
-        // TODO Auto-generated method stub
         for (Project proj : list) {
             if (proj.getId().equals(id)) {
                 return proj;
@@ -50,24 +50,89 @@ public class ProjectDaoImp implements IProjectDaoService {
 
     @Override
     public int update(Project project) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public int create(Project project) {
-        // TODO Auto-generated method stub
-        return 0;
+    public boolean create(Project project) {
+        if (null != project) {
+            list.add(project);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void delete(Long id) {
-        // TODO Auto-generated method stub
+    public boolean delete(Long id) {
+        for (Project pro : list) {
+            if (pro.getId().equals(id)) {
+                list.remove(pro);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public List<Project> projectByQuery(String query, ProjectStatusEnum status) {
+        int numberProject;
+        try {
+            numberProject = Integer.parseInt(query);
+            return list.stream().filter(t -> t.getStatus().equals(status))
+                    .filter(t -> (numberProject == t.getProjectNumber()
+                            || ("%" + query + "%").toUpperCase().contains(t.getName().toUpperCase()))
+                            || (("%" + query + "%").toUpperCase().contains(t.getCustomer().toUpperCase())))
+                    .collect(Collectors.toList());
+        } catch (NumberFormatException e) {
+            System.out.println("cannot format string query search to number project integer");
+            e.printStackTrace();
+            return list.stream().filter(t -> t.getStatus().equals(status))
+                    .filter(t -> (("%" + query + "%").toUpperCase().contains(t.getName().toUpperCase()))
+                            || (("%" + query + "%").toUpperCase().contains(t.getCustomer().toUpperCase())))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
     public List<Project> projectByQuery(String query) {
-        // TODO Auto-generated method stub
-        return null;
+        int numberProject = -1;
+        try {
+            numberProject = Integer.parseInt(query);
+        } catch (NumberFormatException e) {
+            // e.printStackTrace();
+            numberProject = -1;
+        }
+        final int checkNumberProject = numberProject;
+        return list.stream()
+                .filter(t -> (checkNumberProject == t.getProjectNumber()
+                        || ("%" + query + "%").toUpperCase().contains(t.getName().toUpperCase()))
+                        || (("%" + query + "%").toUpperCase().contains(t.getCustomer().toUpperCase())))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Project> projectByQuery(ProjectStatusEnum status) {
+        return list.stream().filter(t -> t.getStatus().equals(status)).collect(Collectors.toList());
+    }
+
+    @Override
+    public void checkNumber(int number) throws ProjectNumberAlreadyExistsException {
+        for (Project p : list) {
+            if (p.getProjectNumber() == (number)) {
+                System.out.println(p.getProjectNumber() + "hhhhhhhhhhh:" + number);
+                throw new ProjectNumberAlreadyExistsException("The projet number already existed.");
+            }
+        }
+    }
+
+    @Override
+    public boolean deleteByNumberProject(int num) {
+        for (Project pro : list) {
+            if (pro.getProjectNumber() == num) {
+                list.remove(pro);
+                return true;
+            }
+        }
+        return false;/// ?????????????
     }
 }
