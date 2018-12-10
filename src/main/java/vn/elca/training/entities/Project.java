@@ -16,14 +16,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import vn.elca.training.utils.ProjectStatusEnum;
+
 @Entity
-@Table(name ="tbl_project")
+@Table(name = "tbl_project")
 public class Project extends Version {
-	@Column(nullable = false)
+    @Column(nullable = false)
     private int projectNumber;
-	@Column(nullable = false)
+    @Column(nullable = false)
     private String name;
-	@Column(nullable = false)
+    @Column(nullable = false)
     private String customer;
     @Column(nullable = false)
     private ProjectStatusEnum status;
@@ -31,13 +32,22 @@ public class Project extends Version {
     private Date startDate;
     @Column(nullable = true)
     private Date endDate;
-   
     private Group group;
-    
     private Set<Employee> employees = new HashSet<>();
-    
-	public Project() {
+
+    public Project() {
         super();
+    }
+
+    public Project(int version, int projectNumber, String name, String customer, ProjectStatusEnum status,
+            Date startDate, Date endDate) {
+        super(version);
+        this.projectNumber = projectNumber;
+        this.name = name;
+        this.customer = customer;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public Project(Long id, int version, int projectNumber, String name, String customer, ProjectStatusEnum status,
@@ -125,24 +135,24 @@ public class Project extends Version {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="group_id")
+    @JoinColumn(name = "group_id")
     public Group getGroup() {
-		return group;
-	}
+        return group;
+    }
 
-	public void setGroup(Group group) {
-		this.group = group;
-	}
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="tbl_project_employee", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name ="employee_id"))
-	public Set<Employee> getEmployees() {
-		return employees;
-	}
+    public void setGroup(Group group) {
+        this.group = group;
+    }
 
-	public void setEmployees(Set<Employee> employees) {
-		this.employees = employees;
-	}
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "tbl_project_employee", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "employee_id"))
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
 
-
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
+    }
 }

@@ -21,4 +21,6 @@ public interface IProjectService {
     List<Integer> delteProjectNumberList(int[] listNumber);
 
     void checkProjectNumberExits(int i) throws ProjectNumberAlreadyExistsException;
+
+    void initData();
 }

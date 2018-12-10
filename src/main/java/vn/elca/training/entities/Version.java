@@ -1,12 +1,14 @@
 package vn.elca.training.entities;
 
-
 public abstract class Version {
     protected Long id;
-
     protected int version;
 
     public Version() {
+    }
+
+    public Version(int version) {
+        this.version = version;
     }
 
     public Long getId() {

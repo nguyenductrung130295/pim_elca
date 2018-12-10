@@ -46,6 +46,7 @@ public class PimController {
     @RequestMapping("/")
     @ResponseBody
     String test() {
+        projectService.initData();
         return "please access localhost:/8080/project/list";
     }
 

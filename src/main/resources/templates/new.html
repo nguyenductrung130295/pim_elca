@@ -77,8 +77,8 @@
         <label for="pro_group"><span th:text="#{project.group}"></span><span class="mandatory">*</span></label>
       </div>
       <div class="col-md-4">
-        <select class="form-control in-txt-cus" style="font-size:12px;" id="pro_group" th:field="*{groupId}">
-          <option value="" selected th:text="#{project.group}"></option>
+        <select class="form-control in-txt-cus" style="font-size:12px;" id="pro_group" th:field="*{group}">
+          <!-- <option value="" selected th:text="#{project.group}"></option> -->
           <th:foreach  th:each="gr : ${groupProject}">
             <option th:value="${gr.id}" th:text="${gr.name}"></option>
           </th:foreach>

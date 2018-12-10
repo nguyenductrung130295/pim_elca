@@ -3,7 +3,6 @@ package vn.elca.training.entities;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,16 +14,14 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="tbl_group")
+@Table(name = "tbl_group")
 public class Group extends Version {
     @Column(nullable = true)
     private String name;
-    
-    private Employee employee;
-    
+    private Employee leader;
     private Set<Project> projects = new HashSet<>();
-    
-	@Override
+
+    @Override
     @Id
     @GeneratedValue
     public Long getId() {
@@ -47,7 +44,6 @@ public class Group extends Version {
         super.setVersion(version);
     }
 
-
     public String getName() {
         return name;
     }
@@ -55,34 +51,37 @@ public class Group extends Version {
     public void setName(String name) {
         this.name = name;
     }
-    
-    @OneToMany(mappedBy="group", fetch = FetchType.EAGER)
+
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     public Set<Project> getProjects() {
-		return projects;
-	}
-    
-	public void setProjects(Set<Project> projects) {
-		this.projects = projects;
-	}
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "group_leader_id")
-	public Employee getEmployee() {
-		return employee;
-	}
+        return projects;
+    }
 
-	public void setEmployee(Employee employee) {
-		this.employee = employee;
-	}
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
 
-	public Group(Long id, int version, String name) {
+    public Group(Long id, int version, String name) {
         super(id, version);
         this.name = name;
     }
 
-    public Group() {
-		super();
-	}
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_leader_id")
+    public Employee getLeader() {
+        return leader;
+    }
 
-	
-    
+    public void setLeader(Employee leader) {
+        this.leader = leader;
+    }
+
+    public Group(int version, String name) {
+        super(version);
+        this.name = name;
+    }
+
+    public Group() {
+        super();
+    }
 }
