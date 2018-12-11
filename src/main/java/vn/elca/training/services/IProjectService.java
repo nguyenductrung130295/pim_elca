@@ -12,13 +12,10 @@ public interface IProjectService {
 
     List<Project> findProjectByQuery(String queryStr, String queryStatus);
 
-    boolean createProject(Project project);
-
-    int updateProject(Project project);
+    boolean createProject(Project project, String[] visas);
 
     void deleteProjectByIdAndNewStatus(Long id) throws Exception;
 
-    // List<Integer> delteProjectNumberList(int[] listNumber);
     void checkProjectNumberExits(int i) throws ProjectNumberAlreadyExistsException;
 
     void initData();
@@ -26,4 +23,6 @@ public interface IProjectService {
     void deleteProjectByListIdAndNewStatus(Long[] projectIds) throws Exception;
 
     String getListMemberVisaOfProject(Project project);
+
+	boolean updateProject(Project project, String[] splitVisaMember);
 }

@@ -1,5 +1,8 @@
 package vn.elca.training.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import vn.elca.training.entities.Project;
 
 public class AppUtils {
@@ -10,5 +13,17 @@ public class AppUtils {
             return true;
         }
         return false;
+    }
+    public static String[] splitVisaMember(String visaString) {
+    	int n=0;
+    	String[] visas = visaString.split(",");
+    	String[]  results = new String[visas.length];
+    	for(int i=0;i<visas.length;i++) {
+    		if(visas[i].length()>0) {
+    			results[n]=visas[i];
+    			n++;
+    		}
+    	}
+    	return results;
     }
 }

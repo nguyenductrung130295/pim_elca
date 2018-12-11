@@ -12,8 +12,6 @@ import vn.elca.training.entities.Employee;
 @Service
 public class EmployServiceImp implements IEmployeeService {
     @Autowired
-    EmployeeImp employeeDao;
-    @Autowired
     IEmployeeRepository employeeRepository;
 
     @Override

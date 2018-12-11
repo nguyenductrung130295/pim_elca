@@ -63,33 +63,34 @@ public class PimController {
         model.addAttribute("groupProject", groupService.getAllGroup());
         return "new";
     }
-
+    /**
+     * Create project by method post, check error and save
+     * @param project
+     * @param listMemberVISA
+     * @param bindingResult
+     * @param model
+     * @return
+     */
     @PostMapping("/create")
     String createProject(@ModelAttribute("project") Project project,
             @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
-        // System.out.println("#######Create method invoked: " + project.getStatus() + " ######VISA:" + listMemberVISA);
-        boolean existNumber;
+        boolean existNumber = false;
         try {
             projectService.checkProjectNumberExits(project.getProjectNumber());
-            existNumber = false;
         } catch (ProjectNumberAlreadyExistsException e) {
-            // e.printStackTrace();
-            // System.out.println("EXIST PROJECT NUMBER");
             existNumber = true;
         }
-        // System.out.println("-------------------<<>>:" + existNumber);
         if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || existNumber
-        /* || checkByVisa(listMemberVISA.split(",")) != "" */) {
+         || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
             model.addAttribute("errorValidate", "true");
-            model.addAttribute("listMember", "");// ????????????????????????
+            model.addAttribute("listMember", listMemberVISA);
             model.addAttribute("type", "new");
             model.addAttribute("existProject", existNumber);
             model.addAttribute("groupProject", groupService.getAllGroup());
             return "new";
         }
-        // project.setId(Long.valueOf(project.getProjectNumber()));// ?????NOTE:whatelksdjfalksjfdlaksjdflaksjdlk
-        if (!projectService.createProject(project)) {
-            return "redirect:error";
+        if (!projectService.createProject(project,AppUtils.splitVisaMember(listMemberVISA))) {
+            return "redirect:/project/error";
         }
         return "redirect:list";
     }
@@ -104,9 +105,28 @@ public class PimController {
         return "new";
     }
 
-    @PostMapping("/update")
-    String updateProject() {
-        return "redirect:list";
+    @PostMapping("/{id}/update")
+    String updateProject(@PathVariable("id") Long id, @ModelAttribute("project") Project project,
+            @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
+    	boolean existNumber = false;
+        try {
+            projectService.checkProjectNumberExits(project.getProjectNumber());
+        } catch (ProjectNumberAlreadyExistsException e) {
+            existNumber = true;
+        }
+        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || !existNumber
+         || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
+            model.addAttribute("errorValidate", "true");
+            model.addAttribute("listMember", listMemberVISA);
+            model.addAttribute("type", "edit");
+            model.addAttribute("existProject", existNumber);
+            model.addAttribute("groupProject", groupService.getAllGroup());
+            return "new";//template new
+        }
+        if (!projectService.updateProject(project,AppUtils.splitVisaMember(listMemberVISA))) {
+            return "redirect:/project/error";
+        }
+        return "redirect:/project/list";
     }
 
     /**
@@ -247,6 +267,6 @@ public class PimController {
      * @return list visa not exist in db
      */
     private String checkByVisa(String[] visa) {
-        return employeeService.checkedEmployee(visa);
+        return visa == null ? "" : employeeService.checkedEmployee(visa);
     }
 }

@@ -29,8 +29,6 @@ import vn.elca.training.utils.ProjectStatusEnum;
 @Service
 public class ProjectServiceImp implements IProjectService {
     @Autowired
-    IProjectDaoService projectDao;
-    @Autowired
     private IProjectRepository projectRepository;
     @Autowired
     private IGroupRepository groupRepository;
@@ -39,6 +37,9 @@ public class ProjectServiceImp implements IProjectService {
     @PersistenceContext
     private EntityManager em;
 
+    /**
+     * Find project by id
+     */
     @Override
     public Project findProjectById(Long id) {
         QProject qpro = QProject.project;
@@ -46,29 +47,27 @@ public class ProjectServiceImp implements IProjectService {
         return query.select(qpro).from(qpro).where(qpro.id.eq(id)).fetchOne();
     }
 
+    /**
+     * Get all project list
+     */
     @Override
     public List<Project> findProjectAll() {
-        // TODO Auto-generated method stub
         return projectRepository.findAll();
     }
 
     @Override
     public List<Project> findProjectByQuery(String queryStr, String queryStatus) {
-        // TODO Auto-generated method stub
         List<Project> listResult = new ArrayList<>();
         if ("".equals(queryStr)) {
             if ("".equals(queryStatus)) {
-                // listResult = projectDao.getProjectAll();
                 listResult = projectRepository.findAll();
             } else {
-                // listResult = projectDao.projectByQuery(ProjectStatusEnum.getProjectStatusByCode(queryStatus));
                 listResult = projectRepository.findByStatus(ProjectStatusEnum.getProjectStatusByCode(queryStatus));
             }
         } else {
             try {
                 int number_project = Integer.parseInt(queryStr);
                 if ("".equals(queryStatus)) {
-                    // listResult = projectDao.projectByQuery(queryStr);
                     listResult = projectRepository.findByQuery(queryStr, number_project);
                 } else {
                     listResult = projectRepository.projectByQuery(queryStr,
@@ -76,7 +75,6 @@ public class ProjectServiceImp implements IProjectService {
                 }
             } catch (NumberFormatException e) {
                 if ("".equals(queryStatus)) {
-                    // listResult = projectDao.projectByQuery(queryStr);
                     listResult = projectRepository.findByQuery(queryStr);
                 } else {
                     listResult = projectRepository.projectByQuery(queryStr,
@@ -86,23 +84,29 @@ public class ProjectServiceImp implements IProjectService {
         }
         return listResult;
     }
-
+    /**
+     * Set member for project and save project to db
+     */
     @Override
-    public boolean createProject(Project project) {
+    public boolean createProject(Project project, String[] visas) {
+    	Set<Employee> members = employeeRepository.findByVisaList(visas);
+    	project.setEmployees(members);
         if (projectRepository.saveAndFlush(project) == null) {
             return false;
         }
         return true;
     }
 
-    @Override
-    public int updateProject(Project project) {
-        // TODO Auto-generated method stub
-        return projectDao.update(project);
-        // return 0;
-    }
+    
 
-    /**
+    @Override
+	public boolean updateProject(Project project, String[] splitVisaMember) {
+    	Set<Employee> members = employeeRepository.findByVisaList(splitVisaMember);
+    	project.setEmployees(members);
+    	return projectRepository.saveAndFlush(project)==null?false:true;
+	}
+
+	/**
      * Delete single project by id and status is NEW {@inheritDoc}
      */
     @Override
@@ -190,7 +194,9 @@ public class ProjectServiceImp implements IProjectService {
         projectRepository.saveAndFlush(proj6);
         System.out.println("-------DB: init project data done");
     }
-
+    /**
+     * get list member visa of project to edit page
+     */
     @Override
     public String getListMemberVisaOfProject(Project project) {
         Set<Employee> members = project.getEmployees();
