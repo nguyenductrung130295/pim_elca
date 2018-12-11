@@ -68,7 +68,7 @@ $("#btn_delete").click(function(){
 				list_number:list
 			},
 			success:function(data){
-				if(data.length <= 0){
+				if(data === "success"){
 					for(var i=checkboxs.length-1;i>=0;i--){
 						if(checkboxs[i].checked){
 							checkboxs[i].parentElement.parentElement.remove();

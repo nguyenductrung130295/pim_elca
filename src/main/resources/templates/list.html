@@ -79,7 +79,7 @@
     <th:foreach th:each="proj : ${projectList}">
       <tr>
           <td class="text-center">
-            <input type="checkbox" class="checkbox-cus" th:value="${proj.projectNumber}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
+            <input type="checkbox" class="checkbox-cus" th:value="${proj.id}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
           </td>
           <td class="text-right"><a th:href="${proj.id}+'/edit'" th:text="${proj.projectNumber}"></a></td>
           <td th:text="${proj.name}"></td>

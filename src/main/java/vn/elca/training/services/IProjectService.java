@@ -16,11 +16,14 @@ public interface IProjectService {
 
     int updateProject(Project project);
 
-    boolean deleteProjectById(Long id);
+    void deleteProjectByIdAndNewStatus(Long id) throws Exception;
 
-    List<Integer> delteProjectNumberList(int[] listNumber);
-
+    // List<Integer> delteProjectNumberList(int[] listNumber);
     void checkProjectNumberExits(int i) throws ProjectNumberAlreadyExistsException;
 
     void initData();
+
+    void deleteProjectByListIdAndNewStatus(Long[] projectIds) throws Exception;
+
+    String getListMemberVisaOfProject(Project project);
 }

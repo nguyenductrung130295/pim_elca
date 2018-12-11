@@ -2,10 +2,19 @@ package vn.elca.training.services;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.jpa.impl.JPAQuery;
 
 import vn.elca.training.dao.IEmployeeRepository;
 import vn.elca.training.dao.IGroupRepository;
@@ -13,6 +22,7 @@ import vn.elca.training.dao.IProjectRepository;
 import vn.elca.training.entities.Employee;
 import vn.elca.training.entities.Group;
 import vn.elca.training.entities.Project;
+import vn.elca.training.entities.QProject;
 import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 import vn.elca.training.utils.ProjectStatusEnum;
 
@@ -26,10 +36,14 @@ public class ProjectServiceImp implements IProjectService {
     private IGroupRepository groupRepository;
     @Autowired
     private IEmployeeRepository employeeRepository;
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public Project findProjectById(Long id) {
-        return JPAQuery;
+        QProject qpro = QProject.project;
+        JPAQuery<Project> query = new JPAQuery<Project>(em);
+        return query.select(qpro).from(qpro).where(qpro.id.eq(id)).fetchOne();
     }
 
     @Override
@@ -44,15 +58,30 @@ public class ProjectServiceImp implements IProjectService {
         List<Project> listResult = new ArrayList<>();
         if ("".equals(queryStr)) {
             if ("".equals(queryStatus)) {
-                listResult = projectDao.getProjectAll();
+                // listResult = projectDao.getProjectAll();
+                listResult = projectRepository.findAll();
             } else {
-                listResult = projectDao.projectByQuery(ProjectStatusEnum.getProjectStatusByCode(queryStatus));
+                // listResult = projectDao.projectByQuery(ProjectStatusEnum.getProjectStatusByCode(queryStatus));
+                listResult = projectRepository.findByStatus(ProjectStatusEnum.getProjectStatusByCode(queryStatus));
             }
         } else {
-            if ("".equals(queryStatus)) {
-                listResult = projectDao.projectByQuery(queryStr);
-            } else {
-                listResult = projectDao.projectByQuery(queryStr, ProjectStatusEnum.getProjectStatusByCode(queryStatus));
+            try {
+                int number_project = Integer.parseInt(queryStr);
+                if ("".equals(queryStatus)) {
+                    // listResult = projectDao.projectByQuery(queryStr);
+                    listResult = projectRepository.findByQuery(queryStr, number_project);
+                } else {
+                    listResult = projectRepository.projectByQuery(queryStr,
+                            ProjectStatusEnum.getProjectStatusByCode(queryStatus), number_project);
+                }
+            } catch (NumberFormatException e) {
+                if ("".equals(queryStatus)) {
+                    // listResult = projectDao.projectByQuery(queryStr);
+                    listResult = projectRepository.findByQuery(queryStr);
+                } else {
+                    listResult = projectRepository.projectByQuery(queryStr,
+                            ProjectStatusEnum.getProjectStatusByCode(queryStatus));
+                }
             }
         }
         return listResult;
@@ -60,9 +89,10 @@ public class ProjectServiceImp implements IProjectService {
 
     @Override
     public boolean createProject(Project project) {
-        // TODO Auto-generated method stub
-        return projectDao.create(project);
-        // return 0;
+        if (projectRepository.saveAndFlush(project) == null) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -72,30 +102,40 @@ public class ProjectServiceImp implements IProjectService {
         // return 0;
     }
 
+    /**
+     * Delete single project by id and status is NEW {@inheritDoc}
+     */
     @Override
-    public boolean deleteProjectById(Long id) {
-        // TODO Auto-generated method stub
-        return projectDao.delete(id);
+    @Transactional
+    public void deleteProjectByIdAndNewStatus(Long id) throws Exception {
+        projectRepository.deleteByIdAndStatus(id, ProjectStatusEnum.NEW);
     }
 
+    /**
+     * Delete all of selected project with in status is NEW {@inheritDoc}
+     */
     @Override
-    public List<Integer> delteProjectNumberList(int[] listNumber) {
-        // TODO Auto-generated method stub
-        List<Integer> error = new ArrayList<>();
-        for (int num : listNumber) {
-            if (projectDao.deleteByNumberProject(num) == false) {
-                error.add(num);
-            }
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void deleteProjectByListIdAndNewStatus(Long[] listProjectIds) throws Exception {
+        for (Long id : listProjectIds) {
+            projectRepository.deleteByIdAndStatus(id, ProjectStatusEnum.NEW);
         }
-        return error;
     }
 
+    /**
+     * Get number be counted by project number of project and throws exception if count greater than 0
+     */
     @Override
     public void checkProjectNumberExits(int number) throws ProjectNumberAlreadyExistsException {
-        // TODO Auto-generated method stub
-        projectDao.checkNumber(number);
+        int count = projectRepository.countByProjectNumber(number);
+        if (count > 0) {
+            throw new ProjectNumberAlreadyExistsException("The projet number already existed.");
+        }
     }
 
+    /**
+     * Init data first when start project localhost:8080/project/ {@inheritDoc}
+     */
     @Override
     public void initData() {
         System.out.println("-------DB: init project data starting");
@@ -133,12 +173,34 @@ public class ProjectServiceImp implements IProjectService {
         proj4.setGroup(groupJava);
         proj5.setGroup(groupSecu);
         proj6.setGroup(groupCim);
+        Set<Employee> members = new HashSet<>();
+        members.add(em1);
+        members.add(em5);
+        members.add(em3);
+        proj1.setEmployees(members);
         projectRepository.saveAndFlush(proj1);
+        members = new HashSet<>();
+        members.add(em5);
+        members.add(em2);
+        proj2.setEmployees(members);
         projectRepository.saveAndFlush(proj2);
         projectRepository.saveAndFlush(proj3);
         projectRepository.saveAndFlush(proj4);
         projectRepository.saveAndFlush(proj5);
         projectRepository.saveAndFlush(proj6);
         System.out.println("-------DB: init project data done");
+    }
+
+    @Override
+    public String getListMemberVisaOfProject(Project project) {
+        Set<Employee> members = project.getEmployees();
+        String result = "";
+        for (Employee e : members) {
+            result += e.getVisa() + ",";
+        }
+        if (result.length() > 3) {
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
     }
 }

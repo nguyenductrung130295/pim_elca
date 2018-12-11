@@ -8,4 +8,5 @@ import vn.elca.training.entities.Employee;
 
 @Repository
 public interface IEmployeeRepository extends JpaRepository<Employee, Long>, QuerydslPredicateExecutor<Employee> {
+    int countByVisa(String string);
 }

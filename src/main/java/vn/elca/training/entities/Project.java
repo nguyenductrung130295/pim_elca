@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,7 +28,6 @@ public class Project extends Version {
     private String name;
     @Column(nullable = false)
     private String customer;
-    @Column(nullable = false)
     private ProjectStatusEnum status;
     @Column(nullable = false)
     private Date startDate;
@@ -112,6 +113,8 @@ public class Project extends Version {
         this.customer = customer;
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 3)
     public ProjectStatusEnum getStatus() {
         return status;
     }

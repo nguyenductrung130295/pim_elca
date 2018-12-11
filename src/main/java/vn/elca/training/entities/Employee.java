@@ -27,6 +27,10 @@ public class Employee extends Version {
     private Group group;
     private Set<Project> projects = new HashSet<>();
 
+    public Employee() {
+        super();
+    }
+
     public Employee(Long id, int version, String visa, String firstName, String lastName, Date birthDate) {
         super(id, version);
         this.visa = visa;
