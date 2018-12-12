@@ -1,24 +1,23 @@
 package vn.elca.training.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import vn.elca.training.dao.EmployeeImp;
 import vn.elca.training.dao.IEmployeeRepository;
-import vn.elca.training.entities.Employee;
 
 @Service
 public class EmployServiceImp implements IEmployeeService {
     @Autowired
     IEmployeeRepository employeeRepository;
 
+    /**
+     * Check existed employee in database return. Result list of visa not exist {@inheritDoc}
+     */
     @Override
     public String checkedEmployee(String[] visa) {
         String result = "";
         for (int i = 0; i < visa.length; i++) {
-            if (employeeRepository.countByVisa(visa[i]) == 0) {
+            if (employeeRepository.countByVisa(visa[i].trim().toUpperCase()) == 0) {
                 result += visa[i] + ",";
             }
         }
@@ -26,24 +25,5 @@ public class EmployServiceImp implements IEmployeeService {
             result = result.substring(0, result.length() - 1);
         }
         return result;
-        // return employeeDao.existsVISA(visa);
-    }
-
-    @Override
-    public List<Employee> getAllEmployee() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getEmployeeNameByVISA(String visa) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Employee getEmployeyByVSIA(String visa) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

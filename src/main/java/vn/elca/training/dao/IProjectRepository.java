@@ -16,21 +16,19 @@ public interface IProjectRepository extends JpaRepository<Project, Long>, Queryd
     int countByProjectNumber(int projectNumber);
 
     void deleteByIdAndStatus(Long id, ProjectStatusEnum status);
-    // @Query("delete from Project where id = :id and status = :newstatus")
-    // void deleteByIdAndStatus(@Param("id") Long id, @Param("newstatus") ProjectStatusEnum newStatus);
 
     List<Project> findByStatus(ProjectStatusEnum projectStatusByCode);
 
-    @Query("select p from Project p where p.customer like %:str% or p.name like %:str%")
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str%")
     List<Project> findByQuery(@Param("str") String queryStr);
 
-    @Query("select p from Project p where p.customer like %:str% or p.name like %:str% or p.projectNumber = :num")
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% or p.projectNumber = :num")
     List<Project> findByQuery(@Param("str") String queryStr, @Param("num") int number_project);
 
-    @Query("select p from Project p where p.customer like %:str% or p.name like %:str% and status = :sta")
-    List<Project> projectByQuery(@Param("str") String queryStr, @Param("sta") ProjectStatusEnum projectStatusByCode);
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% and status = :sta")
+    List<Project> findByQuery(@Param("str") String queryStr, @Param("sta") ProjectStatusEnum projectStatusByCode);
 
-    @Query("select p from Project p where p.customer like %:str% or p.name like %:str% or p.projectNumber = :num and status = :sta")
-    List<Project> projectByQuery(@Param("str") String queryStr, @Param("sta") ProjectStatusEnum projectStatusByCode,
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% or p.projectNumber = :num and status = :sta")
+    List<Project> findByQuery(@Param("str") String queryStr, @Param("sta") ProjectStatusEnum projectStatusByCode,
             @Param("num") int number_project);
 }

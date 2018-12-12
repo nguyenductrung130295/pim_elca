@@ -63,8 +63,10 @@ public class PimController {
         model.addAttribute("groupProject", groupService.getAllGroup());
         return "new";
     }
+
     /**
      * Create project by method post, check error and save
+     * 
      * @param project
      * @param listMemberVISA
      * @param bindingResult
@@ -81,7 +83,7 @@ public class PimController {
             existNumber = true;
         }
         if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || existNumber
-         || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
+                || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
             model.addAttribute("errorValidate", "true");
             model.addAttribute("listMember", listMemberVISA);
             model.addAttribute("type", "new");
@@ -89,12 +91,19 @@ public class PimController {
             model.addAttribute("groupProject", groupService.getAllGroup());
             return "new";
         }
-        if (!projectService.createProject(project,AppUtils.splitVisaMember(listMemberVISA))) {
+        if (!projectService.createProject(project, AppUtils.splitVisaMember(listMemberVISA))) {
             return "redirect:/project/error";
         }
         return "redirect:list";
     }
 
+    /**
+     * Show edit project page
+     * 
+     * @param id
+     * @param model
+     * @return
+     */
     @RequestMapping("/{id}/edit")
     String editProject(@PathVariable("id") Long id, Model model) {
         Project project = projectService.findProjectById(id);
@@ -105,25 +114,35 @@ public class PimController {
         return "new";
     }
 
+    /**
+     * Update project
+     * 
+     * @param id
+     * @param project
+     * @param listMemberVISA
+     * @param bindingResult
+     * @param model
+     * @return
+     */
     @PostMapping("/{id}/update")
     String updateProject(@PathVariable("id") Long id, @ModelAttribute("project") Project project,
             @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
-    	boolean existNumber = false;
+        boolean existNumber = false;
         try {
             projectService.checkProjectNumberExits(project.getProjectNumber());
         } catch (ProjectNumberAlreadyExistsException e) {
             existNumber = true;
         }
         if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || !existNumber
-         || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
+                || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
             model.addAttribute("errorValidate", "true");
             model.addAttribute("listMember", listMemberVISA);
             model.addAttribute("type", "edit");
-            model.addAttribute("existProject", existNumber);
+            model.addAttribute("existProject", !existNumber);
             model.addAttribute("groupProject", groupService.getAllGroup());
-            return "new";//template new
+            return "new";// template new
         }
-        if (!projectService.updateProject(project,AppUtils.splitVisaMember(listMemberVISA))) {
+        if (!projectService.updateProject(project, AppUtils.splitVisaMember(listMemberVISA))) {
             return "redirect:/project/error";
         }
         return "redirect:/project/list";

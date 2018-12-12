@@ -13,6 +13,7 @@ import vn.elca.training.entities.Employee;
 @Repository
 public interface IEmployeeRepository extends JpaRepository<Employee, Long>, QuerydslPredicateExecutor<Employee> {
     int countByVisa(String string);
-    @Query("select e from Employee e where visa in :visas")
-	Set<Employee> findByVisaList(@Param("visas") String[] visas);
+
+    @Query("select e from Employee e where upper(e.visa) in :visas")
+    Set<Employee> findByVisaList(@Param("visas") String[] visas);
 }

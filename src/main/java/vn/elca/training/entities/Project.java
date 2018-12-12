@@ -66,26 +66,22 @@ public class Project extends Version {
     @Id
     @GeneratedValue
     public Long getId() {
-        // TODO Auto-generated method stub
         return super.getId();
     }
 
     @Override
     public void setId(Long id) {
-        // TODO Auto-generated method stub
         super.setId(id);
     }
 
     @Override
     @Column(nullable = false)
     public int getVersion() {
-        // TODO Auto-generated method stub
         return super.getVersion();
     }
 
     @Override
     public void setVersion(int version) {
-        // TODO Auto-generated method stub
         super.setVersion(version);
     }
 
@@ -139,7 +135,7 @@ public class Project extends Version {
         this.endDate = endDate;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     public Group getGroup() {
         return group;

@@ -57,6 +57,7 @@ public class ProjectServiceImp implements IProjectService {
 
     @Override
     public List<Project> findProjectByQuery(String queryStr, String queryStatus) {
+        queryStr = queryStr.toUpperCase();
         List<Project> listResult = new ArrayList<>();
         if ("".equals(queryStr)) {
             if ("".equals(queryStatus)) {
@@ -70,43 +71,42 @@ public class ProjectServiceImp implements IProjectService {
                 if ("".equals(queryStatus)) {
                     listResult = projectRepository.findByQuery(queryStr, number_project);
                 } else {
-                    listResult = projectRepository.projectByQuery(queryStr,
+                    listResult = projectRepository.findByQuery(queryStr,
                             ProjectStatusEnum.getProjectStatusByCode(queryStatus), number_project);
                 }
             } catch (NumberFormatException e) {
                 if ("".equals(queryStatus)) {
                     listResult = projectRepository.findByQuery(queryStr);
                 } else {
-                    listResult = projectRepository.projectByQuery(queryStr,
+                    listResult = projectRepository.findByQuery(queryStr,
                             ProjectStatusEnum.getProjectStatusByCode(queryStatus));
                 }
             }
         }
         return listResult;
     }
+
     /**
      * Set member for project and save project to db
      */
     @Override
     public boolean createProject(Project project, String[] visas) {
-    	Set<Employee> members = employeeRepository.findByVisaList(visas);
-    	project.setEmployees(members);
+        Set<Employee> members = employeeRepository.findByVisaList(visas);
+        project.setEmployees(members);
         if (projectRepository.saveAndFlush(project) == null) {
             return false;
         }
         return true;
     }
 
-    
-
     @Override
-	public boolean updateProject(Project project, String[] splitVisaMember) {
-    	Set<Employee> members = employeeRepository.findByVisaList(splitVisaMember);
-    	project.setEmployees(members);
-    	return projectRepository.saveAndFlush(project)==null?false:true;
-	}
+    public boolean updateProject(Project project, String[] splitVisaMember) {
+        Set<Employee> members = employeeRepository.findByVisaList(splitVisaMember);
+        project.setEmployees(members);
+        return projectRepository.saveAndFlush(project) == null ? false : true;
+    }
 
-	/**
+    /**
      * Delete single project by id and status is NEW {@inheritDoc}
      */
     @Override
@@ -194,6 +194,7 @@ public class ProjectServiceImp implements IProjectService {
         projectRepository.saveAndFlush(proj6);
         System.out.println("-------DB: init project data done");
     }
+
     /**
      * get list member visa of project to edit page
      */

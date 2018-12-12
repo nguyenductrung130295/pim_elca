@@ -19,7 +19,6 @@ $("#select_status").change(function(){
 
 $(".checkbox-cus").change(function(){
 	var checkedItems = countChecked($(".checkbox-cus"));
-	//showBincycle();
 	if(checkedItems>0){
 		$("#counter_select").text(checkedItems);
 		$("#footer-table").show();
@@ -62,7 +61,7 @@ $("#btn_delete").click(function(){
 			}
 		}
 		$.ajax({
-			url:"delallselect",
+			url:"/project/delallselect",
 			method:"post",
 			data:{
 				list_number:list
@@ -170,14 +169,14 @@ $("#pro_member").keyup(function(){
 	var list = $("#pro_member").val().split(",");
 	var list_actual = [];
 	for(var i in list){
-		if(list[i].length>0){
+		if(list[i].trim().length>0){
 			list_actual.push(list[i]);
 		}
 	}
 	if(list_actual.length==0){
 		return;
 	}
-	$.ajax({url:"checkvisa",
+	$.ajax({url:"/project/checkvisa",
 		method:"post",
 		data:{
 			list_visa:list_actual
@@ -204,7 +203,7 @@ $(document).ready(function(){
 		console.log("changed pro_num");
 		if($("#pro_num").val()!==""){
 			$.ajax({
-				url:"checkprojectid",
+				url:"/project/checkprojectid",
 				data:{
 					project_number : $("#pro_num").val()
 				},
