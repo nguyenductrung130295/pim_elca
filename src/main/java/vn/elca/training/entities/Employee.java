@@ -16,13 +16,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tbl_employee")
 public class Employee extends Version {
-    @Column(nullable = false, unique = true)
     private String visa;
-    @Column(nullable = false)
     private String firstName;
-    @Column(nullable = false)
     private String lastName;
-    @Column(nullable = false)
     private Date birthDate;
     private Group group;
     private Set<Project> projects = new HashSet<>();
@@ -74,6 +70,7 @@ public class Employee extends Version {
         super.setVersion(version);
     }
 
+    @Column(nullable = false, unique = true)
     public String getVisa() {
         return visa;
     }
@@ -82,6 +79,7 @@ public class Employee extends Version {
         this.visa = visa;
     }
 
+    @Column(nullable = false)
     public String getFirstName() {
         return firstName;
     }
@@ -90,6 +88,7 @@ public class Employee extends Version {
         this.firstName = firstName;
     }
 
+    @Column(nullable = false)
     public String getLastName() {
         return lastName;
     }
@@ -98,6 +97,7 @@ public class Employee extends Version {
         this.lastName = lastName;
     }
 
+    @Column(nullable = false)
     public Date getBirthDate() {
         return birthDate;
     }

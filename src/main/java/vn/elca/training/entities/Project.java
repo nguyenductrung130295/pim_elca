@@ -22,16 +22,11 @@ import vn.elca.training.utils.ProjectStatusEnum;
 @Entity
 @Table(name = "tbl_project")
 public class Project extends Version {
-    @Column(nullable = false)
     private int projectNumber;
-    @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
     private String customer;
     private ProjectStatusEnum status;
-    @Column(nullable = false)
     private Date startDate;
-    @Column(nullable = true)
     private Date endDate;
     private Group group;
     private Set<Employee> employees = new HashSet<>();
@@ -85,6 +80,7 @@ public class Project extends Version {
         super.setVersion(version);
     }
 
+    @Column(nullable = false, updatable = false)
     public int getProjectNumber() {
         return projectNumber;
     }
@@ -93,6 +89,7 @@ public class Project extends Version {
         this.projectNumber = projectNumber;
     }
 
+    @Column(nullable = false)
     public String getName() {
         return name;
     }
@@ -101,6 +98,7 @@ public class Project extends Version {
         this.name = name;
     }
 
+    @Column(nullable = false)
     public String getCustomer() {
         return customer;
     }
@@ -119,6 +117,7 @@ public class Project extends Version {
         this.status = status;
     }
 
+    @Column(nullable = false)
     public Date getStartDate() {
         return startDate;
     }
@@ -127,6 +126,7 @@ public class Project extends Version {
         this.startDate = startDate;
     }
 
+    @Column(nullable = true)
     public Date getEndDate() {
         return endDate;
     }

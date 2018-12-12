@@ -2,6 +2,7 @@ package vn.elca.training.web;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -33,6 +34,9 @@ import vn.elca.training.utils.AppUtils;
 @RequestMapping("/project")
 @Scope("session")
 public class PimController {
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String PAGE_TYPE_EDIT = "edit";
+    private static final String PAGE_TYPE_NEW = "new";
     @Autowired
     IProjectService projectService;
     @Autowired
@@ -86,7 +90,7 @@ public class PimController {
                 || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
             model.addAttribute("errorValidate", "true");
             model.addAttribute("listMember", listMemberVISA);
-            model.addAttribute("type", "new");
+            model.addAttribute("type", PAGE_TYPE_NEW);
             model.addAttribute("existProject", existNumber);
             model.addAttribute("groupProject", groupService.getAllGroup());
             return "new";
@@ -107,7 +111,7 @@ public class PimController {
     @RequestMapping("/{id}/edit")
     String editProject(@PathVariable("id") Long id, Model model) {
         Project project = projectService.findProjectById(id);
-        model.addAttribute("type", "edit");
+        model.addAttribute("type", PAGE_TYPE_EDIT);
         model.addAttribute("project", project);
         model.addAttribute("groupProject", groupService.getAllGroup());
         model.addAttribute("listMember", projectService.getListMemberVisaOfProject(project));
@@ -127,18 +131,12 @@ public class PimController {
     @PostMapping("/{id}/update")
     String updateProject(@PathVariable("id") Long id, @ModelAttribute("project") Project project,
             @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
-        boolean existNumber = false;
-        try {
-            projectService.checkProjectNumberExits(project.getProjectNumber());
-        } catch (ProjectNumberAlreadyExistsException e) {
-            existNumber = true;
-        }
-        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || !existNumber
+        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project)
                 || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
             model.addAttribute("errorValidate", "true");
             model.addAttribute("listMember", listMemberVISA);
-            model.addAttribute("type", "edit");
-            model.addAttribute("existProject", !existNumber);
+            model.addAttribute("type", PAGE_TYPE_EDIT);
+            model.addAttribute("existProject", false);
             model.addAttribute("groupProject", groupService.getAllGroup());
             return "new";// template new
         }
@@ -164,12 +162,17 @@ public class PimController {
      * @return
      */
     @RequestMapping("/list")
-    ModelAndView listProject() {
+    ModelAndView listProject(@RequestParam(value = "p") Optional<Integer> page) {
+        int pageNumber = AppUtils.PAGE_NUMBER_DEFAULT;
+        if (page.hashCode() != 0) {
+            pageNumber = page.hashCode();
+        }
         if ("".equals(sessionValue.getTextQuery()) && "".equals(sessionValue.getStatusQuery())) {
-            return new ModelAndView("list", "projectList", projectService.findProjectAll());
-        } else {
             return new ModelAndView("list", "projectList",
-                    projectService.findProjectByQuery(sessionValue.getTextQuery(), sessionValue.getStatusQuery()));
+                    projectService.findProjectAll(pageNumber, AppUtils.ROW_ON_PAGE));
+        } else {
+            return new ModelAndView("list", "projectList", projectService.findProjectByQuery(
+                    sessionValue.getTextQuery(), sessionValue.getStatusQuery(), pageNumber, AppUtils.ROW_ON_PAGE));
         }
     }
 
@@ -181,12 +184,18 @@ public class PimController {
      * @return list of project
      */
     @PostMapping("/query")
-    ModelAndView query(@RequestParam(value = "text_search") String strQuery,
+    ModelAndView query(@RequestParam(value = "p", required = false) Optional<Integer> page,
+            @RequestParam(value = "text_search") String strQuery,
             @RequestParam(value = "status_search") String statusQuery) {
+        int pageNumber = AppUtils.PAGE_NUMBER_DEFAULT;
+        if (page.hashCode() != 0) {
+            pageNumber = page.hashCode();
+        }
         sessionValue.setTextQuery(strQuery);
         sessionValue.setStatusQuery(statusQuery);
-        return new ModelAndView("list", "projectList", projectService.findProjectByQuery(strQuery, statusQuery))
-                .addObject("strQuery", strQuery).addObject("statusQuery", statusQuery);
+        return new ModelAndView("list", "projectList",
+                projectService.findProjectByQuery(strQuery, statusQuery, pageNumber, AppUtils.ROW_ON_PAGE))
+                        .addObject("strQuery", strQuery).addObject("statusQuery", statusQuery);
     }
 
     /**
@@ -226,7 +235,7 @@ public class PimController {
      */
     @InitBinder("project")
     public void customizeBinding(WebDataBinder binder) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
         dateFormatter.setLenient(false);
         binder.registerCustomEditor(Date.class, "startDate", new CustomDateEditor(dateFormatter, true));
         binder.registerCustomEditor(Date.class, "endDate", new CustomDateEditor(dateFormatter, true));

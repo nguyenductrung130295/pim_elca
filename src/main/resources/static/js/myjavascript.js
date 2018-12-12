@@ -57,7 +57,6 @@ $("#btn_delete").click(function(){
 		for(var i=0;i<checkboxs.length;i++){
 			if(checkboxs[i].checked){
 				list.push(checkboxs[i].value);
-				
 			}
 		}
 		$.ajax({
@@ -74,12 +73,12 @@ $("#btn_delete").click(function(){
 						}
 					}
 				}else{
-					window.location.href="error";	
+					window.location.href="/project/error";	
 				}
 						
 			},
 			error:function(){
-				window.location.href="error";
+				window.location.href="/project/error";
 			}
 		})
 		
@@ -93,7 +92,7 @@ $("#pro_enddate").keyup(function(){
 		if(date_end < date_start){
 			$("#pro_startdate").val($("#pro_enddate").val());//start = end
 		}
-		console.log("lksfjlkasjdflksajdlfksajdfs");
+		
 	}
 })
 
@@ -104,7 +103,7 @@ $("#pro_startdate").keyup(function(){
 		if(date_end < date_start){
 			$("#pro_enddate").val($("#pro_startdate").val());//end = start
 		}
-		console.log("lksfjlkasjdflksajdlfksajdfsAAAAAAAAAA");
+		
 	}
 })
 
@@ -155,11 +154,13 @@ function deleteItem(aTag, idProject, nameProject){
 				if(data==="success"){
 					aTag.parentNode.parentNode.remove();
 				}else{
-					console.log("error delete item" +nameProject);
+//					console.log("error delete item" +nameProject);
+					window.location.href="/project/error";
 				}
 			},
 			error:function(){
-				console.log("error request");
+//				console.log("error request");
+				window.location.href="/project/error";
 			}
 		})
 	}
@@ -183,7 +184,6 @@ $("#pro_member").keyup(function(){
 		},
 		success:function(data){
 			if(data!==""){
-				console.log(data);
 				$("#list_visa_er").text(data);
 				$("#error_member").show();
 			}else{
@@ -191,7 +191,7 @@ $("#pro_member").keyup(function(){
 			}
 		},
 		error:function(){
-			
+			window.location.href="/project/error";
 		}
 	})
 })
@@ -200,15 +200,15 @@ $(document).ready(function(){
 	console.log("read document");
 	$("#select_status").val($("#searchStatusQuery").val());
 	$("#pro_num").keyup(function(){
-		console.log("changed pro_num");
-		if($("#pro_num").val()!==""){
+		if($("#pro_num").attr("readonly") == undefined && $("#pro_num").val()!==""){
 			$.ajax({
 				url:"/project/checkprojectid",
 				data:{
 					project_number : $("#pro_num").val()
 				},
 				error:function(){
-					console.log("error ajax check id");
+//					console.log("error ajax check id");
+					window.location.href="/project/error";
 				},
 				success:function(data){
 					console.log("data: "+data);

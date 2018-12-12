@@ -8,9 +8,9 @@ import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 public interface IProjectService {
     Project findProjectById(Long id);
 
-    List<Project> findProjectAll();
+    List<Project> findProjectAll(int pageNumberDefault, int rowOnPage);
 
-    List<Project> findProjectByQuery(String queryStr, String queryStatus);
+    List<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage);
 
     boolean createProject(Project project, String[] visas);
 
@@ -24,5 +24,5 @@ public interface IProjectService {
 
     String getListMemberVisaOfProject(Project project);
 
-	boolean updateProject(Project project, String[] splitVisaMember);
+    boolean updateProject(Project project, String[] splitVisaMember);
 }

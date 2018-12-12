@@ -16,7 +16,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tbl_group")
 public class Group extends Version {
-    @Column(nullable = true)
     private String name;
     private Employee leader;
     private Set<Project> projects = new HashSet<>();
@@ -44,6 +43,7 @@ public class Group extends Version {
         super.setVersion(version);
     }
 
+    @Column(nullable = true)
     public String getName() {
         return name;
     }
