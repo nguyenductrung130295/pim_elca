@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,28 +18,32 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import vn.elca.training.utils.ProjectStatusEnum;
+
 @Entity
-@Table(name ="tbl_project")
+@Table(name = "tbl_project")
 public class Project extends Version {
-	@Column(nullable = false)
     private int projectNumber;
-	@Column(nullable = false)
     private String name;
-	@Column(nullable = false)
     private String customer;
-    @Column(nullable = false)
     private ProjectStatusEnum status;
-    @Column(nullable = false)
     private Date startDate;
-    @Column(nullable = true)
     private Date endDate;
-   
     private Group group;
-    
     private Set<Employee> employees = new HashSet<>();
-    
-	public Project() {
+
+    public Project() {
         super();
+    }
+
+    public Project(int version, int projectNumber, String name, String customer, ProjectStatusEnum status,
+            Date startDate, Date endDate) {
+        super(version);
+        this.projectNumber = projectNumber;
+        this.name = name;
+        this.customer = customer;
+        this.status = status;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public Project(Long id, int version, int projectNumber, String name, String customer, ProjectStatusEnum status,
@@ -55,29 +61,26 @@ public class Project extends Version {
     @Id
     @GeneratedValue
     public Long getId() {
-        // TODO Auto-generated method stub
         return super.getId();
     }
 
     @Override
     public void setId(Long id) {
-        // TODO Auto-generated method stub
         super.setId(id);
     }
 
     @Override
     @Column(nullable = false)
     public int getVersion() {
-        // TODO Auto-generated method stub
         return super.getVersion();
     }
 
     @Override
     public void setVersion(int version) {
-        // TODO Auto-generated method stub
         super.setVersion(version);
     }
 
+    @Column(nullable = false, updatable = false)
     public int getProjectNumber() {
         return projectNumber;
     }
@@ -86,6 +89,7 @@ public class Project extends Version {
         this.projectNumber = projectNumber;
     }
 
+    @Column(nullable = false)
     public String getName() {
         return name;
     }
@@ -94,6 +98,7 @@ public class Project extends Version {
         this.name = name;
     }
 
+    @Column(nullable = false)
     public String getCustomer() {
         return customer;
     }
@@ -102,6 +107,8 @@ public class Project extends Version {
         this.customer = customer;
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 3)
     public ProjectStatusEnum getStatus() {
         return status;
     }
@@ -110,6 +117,7 @@ public class Project extends Version {
         this.status = status;
     }
 
+    @Column(nullable = false)
     public Date getStartDate() {
         return startDate;
     }
@@ -118,6 +126,7 @@ public class Project extends Version {
         this.startDate = startDate;
     }
 
+    @Column(nullable = true)
     public Date getEndDate() {
         return endDate;
     }
@@ -125,24 +134,24 @@ public class Project extends Version {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="group_id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
     public Group getGroup() {
-		return group;
-	}
+        return group;
+    }
 
-	public void setGroup(Group group) {
-		this.group = group;
-	}
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="tbl_project_employee", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name ="employee_id"))
-	public Set<Employee> getEmployees() {
-		return employees;
-	}
+    public void setGroup(Group group) {
+        this.group = group;
+    }
 
-	public void setEmployees(Set<Employee> employees) {
-		this.employees = employees;
-	}
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "tbl_project_employee", joinColumns = @JoinColumn(name = "project_id"), inverseJoinColumns = @JoinColumn(name = "employee_id"))
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
 
-
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
+    }
 }

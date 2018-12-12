@@ -28,7 +28,7 @@
    <br><br>
     <a th:href="@{/project/list}" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
     <a th:href="@{/project/new}" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
-    <a th:href="@{/project/list}" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
+    <a th:href="@{/project/new}" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
     <a th:href="@{/customer/list}" th:text="#{label.menu.customer}"></a><br><br>
     <a th:text="#{label.menu.supplier}"></a><br><br>
   </div>
@@ -49,6 +49,7 @@
         <label for="pro_num"><span th:text="#{project.project_number}"></span> <span class="mandatory">*</span></label>
       </div>
       <div class="col-md-4">
+        <input type="hidden" th:field="*{version}">
         <input type="number" max="9999" min="0" required="required" id="pro_num" autofocus th:field="*{projectNumber}" th:readonly="${type=='edit'?true:false}" class="form-control in-txt-cus">
       </div>
       <div class="col-md-6">
@@ -77,8 +78,8 @@
         <label for="pro_group"><span th:text="#{project.group}"></span><span class="mandatory">*</span></label>
       </div>
       <div class="col-md-4">
-        <select class="form-control in-txt-cus" style="font-size:12px;" id="pro_group" th:field="*{groupId}">
-          <option value="" selected th:text="#{project.group}"></option>
+        <select class="form-control in-txt-cus" style="font-size:12px;" id="pro_group" th:field="*{group}">
+          <!-- <option value="" selected th:text="#{project.group}"></option> -->
           <th:foreach  th:each="gr : ${groupProject}">
             <option th:value="${gr.id}" th:text="${gr.name}"></option>
           </th:foreach>

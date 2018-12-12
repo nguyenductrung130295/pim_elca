@@ -19,7 +19,6 @@ $("#select_status").change(function(){
 
 $(".checkbox-cus").change(function(){
 	var checkedItems = countChecked($(".checkbox-cus"));
-	//showBincycle();
 	if(checkedItems>0){
 		$("#counter_select").text(checkedItems);
 		$("#footer-table").show();
@@ -58,29 +57,28 @@ $("#btn_delete").click(function(){
 		for(var i=0;i<checkboxs.length;i++){
 			if(checkboxs[i].checked){
 				list.push(checkboxs[i].value);
-				
 			}
 		}
 		$.ajax({
-			url:"delallselect",
+			url:"/project/delallselect",
 			method:"post",
 			data:{
 				list_number:list
 			},
 			success:function(data){
-				if(data.length <= 0){
+				if(data === "success"){
 					for(var i=checkboxs.length-1;i>=0;i--){
 						if(checkboxs[i].checked){
 							checkboxs[i].parentElement.parentElement.remove();
 						}
 					}
 				}else{
-					window.location.href="error";	
+					window.location.href="/project/error";	
 				}
 						
 			},
 			error:function(){
-				window.location.href="error";
+				window.location.href="/project/error";
 			}
 		})
 		
@@ -94,7 +92,7 @@ $("#pro_enddate").keyup(function(){
 		if(date_end < date_start){
 			$("#pro_startdate").val($("#pro_enddate").val());//start = end
 		}
-		console.log("lksfjlkasjdflksajdlfksajdfs");
+		
 	}
 })
 
@@ -105,7 +103,7 @@ $("#pro_startdate").keyup(function(){
 		if(date_end < date_start){
 			$("#pro_enddate").val($("#pro_startdate").val());//end = start
 		}
-		console.log("lksfjlkasjdflksajdlfksajdfsAAAAAAAAAA");
+		
 	}
 })
 
@@ -156,35 +154,41 @@ function deleteItem(aTag, idProject, nameProject){
 				if(data==="success"){
 					aTag.parentNode.parentNode.remove();
 				}else{
-					console.log("error delete item" +nameProject);
+//					console.log("error delete item" +nameProject);
+					window.location.href="/project/error";
 				}
 			},
 			error:function(){
-				console.log("error request");
+//				console.log("error request");
+				window.location.href="/project/error";
 			}
 		})
 	}
 }
 
+function switchPage(pageNumber){
+	window.location.replace('?p='+pageNumber+"&text_search="+$("#text-search").val()+"&status_search="+$("#searchStatusQuery").val());
+}
+
+
 $("#pro_member").keyup(function(){
 	var list = $("#pro_member").val().split(",");
 	var list_actual = [];
 	for(var i in list){
-		if(list[i].length>0){
+		if(list[i].trim().length>0){
 			list_actual.push(list[i]);
 		}
 	}
 	if(list_actual.length==0){
 		return;
 	}
-	$.ajax({url:"checkvisa",
+	$.ajax({url:"/project/checkvisa",
 		method:"post",
 		data:{
 			list_visa:list_actual
 		},
 		success:function(data){
 			if(data!==""){
-				console.log(data);
 				$("#list_visa_er").text(data);
 				$("#error_member").show();
 			}else{
@@ -192,7 +196,7 @@ $("#pro_member").keyup(function(){
 			}
 		},
 		error:function(){
-			
+			window.location.href="/project/error";
 		}
 	})
 })
@@ -201,15 +205,15 @@ $(document).ready(function(){
 	console.log("read document");
 	$("#select_status").val($("#searchStatusQuery").val());
 	$("#pro_num").keyup(function(){
-		console.log("changed pro_num");
-		if($("#pro_num").val()!==""){
+		if($("#pro_num").attr("readonly") == undefined && $("#pro_num").val()!==""){
 			$.ajax({
-				url:"checkprojectid",
+				url:"/project/checkprojectid",
 				data:{
 					project_number : $("#pro_num").val()
 				},
 				error:function(){
-					console.log("error ajax check id");
+//					console.log("error ajax check id");
+					window.location.href="/project/error";
 				},
 				success:function(data){
 					console.log("data: "+data);

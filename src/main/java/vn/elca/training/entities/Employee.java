@@ -12,24 +12,31 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
 @Entity
-@Table(name="tbl_employee")
+@Table(name = "tbl_employee")
 public class Employee extends Version {
-	@Column(nullable = false, unique = true)
     private String visa;
-	@Column(nullable = false)
     private String firstName;
-	@Column(nullable = false)
     private String lastName;
-	@Column(nullable = false)
     private Date birthDate;
-	
-	private Group group;
-	
-	private Set<Project> projects = new HashSet<>();
-	
-	public Employee(Long id, int version, String visa, String firstName, String lastName, Date birthDate) {
+    private Group group;
+    private Set<Project> projects = new HashSet<>();
+
+    public Employee() {
+        super();
+    }
+
+    public Employee(Long id, int version, String visa, String firstName, String lastName, Date birthDate) {
         super(id, version);
+        this.visa = visa;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+    }
+
+    public Employee(int version, String visa, String firstName, String lastName, Date birthDate) {
+        super(version);
         this.visa = visa;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -63,6 +70,7 @@ public class Employee extends Version {
         super.setVersion(version);
     }
 
+    @Column(nullable = false, unique = true)
     public String getVisa() {
         return visa;
     }
@@ -71,6 +79,7 @@ public class Employee extends Version {
         this.visa = visa;
     }
 
+    @Column(nullable = false)
     public String getFirstName() {
         return firstName;
     }
@@ -79,6 +88,7 @@ public class Employee extends Version {
         this.firstName = firstName;
     }
 
+    @Column(nullable = false)
     public String getLastName() {
         return lastName;
     }
@@ -87,6 +97,7 @@ public class Employee extends Version {
         this.lastName = lastName;
     }
 
+    @Column(nullable = false)
     public Date getBirthDate() {
         return birthDate;
     }
@@ -94,22 +105,22 @@ public class Employee extends Version {
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
     }
-    @OneToOne(mappedBy = "employee", fetch = FetchType.EAGER)
-	public Group getGroup() {
-		return group;
-	}
 
-	public void setGroup(Group group) {
-		this.group = group;
-	}
-	@ManyToMany(mappedBy = "employees",fetch = FetchType.LAZY)
-	public Set<Project> getProjects() {
-		return projects;
-	}
+    @OneToOne(mappedBy = "leader", fetch = FetchType.LAZY)
+    public Group getGroup() {
+        return group;
+    }
 
-	public void setProjects(Set<Project> projects) {
-		this.projects = projects;
-	}
-	
-    
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
+    @ManyToMany(mappedBy = "employees", fetch = FetchType.LAZY)
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
 }

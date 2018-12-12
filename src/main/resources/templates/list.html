@@ -29,7 +29,7 @@
     <br><br>
     <a th:href="@{/project/list}" class="new-menu-style" th:text="#{label.menu.project_list}"></a><br><br><br>
     <a th:href="@{/project/new}" class="new-menu-style" th:text="#{label.menu.new}"></a><br><br>
-    <a th:href="@{/project/list}" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
+    <a th:href="@{/project/new}" class="project-menu-style" th:text="#{label.menu.project}"></a><br><br>
     <a th:href="@{/customer/list}" th:text="#{label.menu.customer}"></a><br><br>
     <a th:text="#{label.menu.supplier}"></a><br><br>
   </div>
@@ -76,10 +76,10 @@
       </tr>
     </thead>
     <tbody>
-    <th:foreach th:each="proj : ${projectList}">
+    <th:foreach th:each="proj : ${projectList.content}">
       <tr>
           <td class="text-center">
-            <input type="checkbox" class="checkbox-cus" th:value="${proj.projectNumber}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
+            <input type="checkbox" class="checkbox-cus" th:value="${proj.id}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
           </td>
           <td class="text-right"><a th:href="${proj.id}+'/edit'" th:text="${proj.projectNumber}"></a></td>
           <td th:text="${proj.name}"></td>
@@ -110,13 +110,12 @@
   </div>
   <div id="pagin" class="text-right">
     <ul class="pagination">
-    <li><a href="#">&lt&lt</a></li>
-    <li><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li class="disabled"><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
-    <li><a href="#">>></a></li>
+    <li th:if="${projectList.hasPrevious()}"><a href="#" th:id="${projectList.number-1}" th:onclick="switchPage(this.id)">&lt&lt</a></li>
+    <th:block th:each="i : ${#numbers.sequence(0,projectList.totalPages-1)}">
+      <li th:if="${projectList.number == i}" class="paging_disabled disabled"><a href="#" th:text="${i+1}"></a></li>
+      <li th:unless="${projectList.number == i}"><a href="#" th:id="${i}" th:onclick="switchPage(this.id)"><strong th:text="${i+1}"></strong></a></li>  
+    </th:block>
+    <li th:if="${projectList.hasNext()}"><a href="#" th:id="${projectList.number+1}" th:onclick="switchPage(this.id)">>></a></li>
   </ul>
   </div>
 </div>
