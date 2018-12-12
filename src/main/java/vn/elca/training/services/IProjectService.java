@@ -1,6 +1,6 @@
 package vn.elca.training.services;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import vn.elca.training.entities.Project;
 import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
@@ -8,9 +8,9 @@ import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 public interface IProjectService {
     Project findProjectById(Long id);
 
-    List<Project> findProjectAll(int pageNumberDefault, int rowOnPage);
+    Page<Project> findProjectAll(int pageNumberDefault, int rowOnPage);
 
-    List<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage);
+    Page<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage);
 
     boolean createProject(Project project, String[] visas);
 

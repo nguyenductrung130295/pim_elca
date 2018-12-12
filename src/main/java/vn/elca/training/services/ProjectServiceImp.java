@@ -1,15 +1,14 @@
 package vn.elca.training.services;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -52,7 +51,7 @@ public class ProjectServiceImp implements IProjectService {
      * Get all project list
      */
     @Override
-    public List<Project> findProjectAll(int pageNum, int rowOnPage) {
+    public Page<Project> findProjectAll(int pageNum, int rowOnPage) {
         return projectRepository.findAllPaging(PageRequest.of(pageNum, rowOnPage));
     }
 
@@ -60,9 +59,9 @@ public class ProjectServiceImp implements IProjectService {
      * Search project to list by condition query search {@inheritDoc}
      */
     @Override
-    public List<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage) {
+    public Page<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage) {
         queryStr = queryStr.toUpperCase();
-        List<Project> listResult = new ArrayList<>();
+        Page<Project> listResult;
         if ("".equals(queryStr)) {
             if ("".equals(queryStatus)) {
                 listResult = projectRepository.findAllPaging(PageRequest.of(pageNum, rowOnPage));
@@ -112,7 +111,9 @@ public class ProjectServiceImp implements IProjectService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateProject(Project projectUpdate, String[] splitVisaMember) {
-        projectUpdate.setEmployees(employeeRepository.findByVisaList(splitVisaMember));
+        if (splitVisaMember.length > 0) {
+            projectUpdate.setEmployees(employeeRepository.findByVisaList(splitVisaMember));
+        }
         Project projectCurrent = projectRepository.findById(projectUpdate.getId()).get();
         if (projectCurrent.getVersion() == projectUpdate.getVersion()) {
             projectUpdate.setVersion(projectCurrent.getVersion() + 1);

@@ -76,7 +76,7 @@
       </tr>
     </thead>
     <tbody>
-    <th:foreach th:each="proj : ${projectList}">
+    <th:foreach th:each="proj : ${projectList.content}">
       <tr>
           <td class="text-center">
             <input type="checkbox" class="checkbox-cus" th:value="${proj.id}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
@@ -110,13 +110,12 @@
   </div>
   <div id="pagin" class="text-right">
     <ul class="pagination">
-    <li><a href="#">&lt&lt</a></li>
-    <li><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li class="disabled"><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
-    <li><a href="#">>></a></li>
+    <li th:if="${projectList.hasPrevious()}"><a href="#" th:id="${projectList.number-1}" th:onclick="switchPage(this.id)">&lt&lt</a></li>
+    <th:block th:each="i : ${#numbers.sequence(0,projectList.totalPages-1)}">
+      <li th:if="${projectList.number == i}" class="paging_disabled disabled"><a href="#" th:text="${i+1}"></a></li>
+      <li th:unless="${projectList.number == i}"><a href="#" th:id="${i}" th:onclick="switchPage(this.id)"><strong th:text="${i+1}"></strong></a></li>  
+    </th:block>
+    <li th:if="${projectList.hasNext()}"><a href="#" th:id="${projectList.number+1}" th:onclick="switchPage(this.id)">>></a></li>
   </ul>
   </div>
 </div>

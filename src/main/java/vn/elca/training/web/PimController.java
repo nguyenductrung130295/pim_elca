@@ -132,7 +132,7 @@ public class PimController {
     String updateProject(@PathVariable("id") Long id, @ModelAttribute("project") Project project,
             @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project)
-                || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
+                || (listMemberVISA.length() > 0 && checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "")) {
             model.addAttribute("errorValidate", "true");
             model.addAttribute("listMember", listMemberVISA);
             model.addAttribute("type", PAGE_TYPE_EDIT);
@@ -184,7 +184,7 @@ public class PimController {
      * @return list of project
      */
     @PostMapping("/query")
-    ModelAndView query(@RequestParam(value = "p", required = false) Optional<Integer> page,
+    ModelAndView query(@RequestParam(value = "p") Optional<Integer> page,
             @RequestParam(value = "text_search") String strQuery,
             @RequestParam(value = "status_search") String statusQuery) {
         int pageNumber = AppUtils.PAGE_NUMBER_DEFAULT;

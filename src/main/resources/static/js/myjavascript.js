@@ -166,6 +166,11 @@ function deleteItem(aTag, idProject, nameProject){
 	}
 }
 
+function switchPage(pageNumber){
+	window.location.replace('?p='+pageNumber+"&text_search="+$("#text-search").val()+"&status_search="+$("#searchStatusQuery").val());
+}
+
+
 $("#pro_member").keyup(function(){
 	var list = $("#pro_member").val().split(",");
 	var list_actual = [];

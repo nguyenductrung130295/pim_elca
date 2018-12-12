@@ -75,7 +75,7 @@ label{
   margin:0px;
   height:32px;
 }
-.pagination a{
+.pagination > a{
   height:32px;
 }
 .col-md-4-cus{
@@ -110,4 +110,7 @@ label{
 }
 #pagin{
   margin-top:20px;
+}
+.paging_disabled{
+  background-color:#d2d2d2;
 }
