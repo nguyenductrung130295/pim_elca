@@ -2,11 +2,13 @@ package vn.elca.training.web;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.annotation.Scope;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import vn.elca.training.entities.Project;
+import vn.elca.training.exception.DifferenceStatusProjectDeleteException;
 import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 import vn.elca.training.services.IEmployeeService;
 import vn.elca.training.services.IGroupService;
@@ -47,10 +50,9 @@ public class PimController {
     IEmployeeService employeeService;
 
     @RequestMapping("/")
-    @ResponseBody
     String test() {
         projectService.initData();
-        return "please access localhost:/8080/project/list";
+        return "redirect:list";
     }
 
     /**
@@ -80,15 +82,19 @@ public class PimController {
     @PostMapping("/create")
     String createProject(@ModelAttribute("project") Project project,
             @RequestParam("project_member") String listMemberVISA, BindingResult bindingResult, Model model) {
+        boolean flagError = false;
         boolean existNumber = false;
         try {
             projectService.checkProjectNumberExits(project.getProjectNumber());
         } catch (ProjectNumberAlreadyExistsException e) {
             existNumber = true;
         }
-        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project) || existNumber
+        if (bindingResult.hasErrors() || AppUtils.isNeedMandatoryProjectField(project)// || existNumber
                 || checkByVisa(AppUtils.splitVisaMember(listMemberVISA)) != "") {
-            model.addAttribute("errorValidate", "true");
+            flagError = true;
+        }
+        if (flagError || existNumber) {
+            model.addAttribute("errorValidate", flagError);
             model.addAttribute("listMember", listMemberVISA);
             model.addAttribute("type", PAGE_TYPE_NEW);
             model.addAttribute("existProject", existNumber);
@@ -140,10 +146,20 @@ public class PimController {
             model.addAttribute("groupProject", groupService.getAllGroup());
             return "new";// template new
         }
-        if (!projectService.updateProject(project, AppUtils.splitVisaMember(listMemberVISA))) {
-            return "redirect:/project/error";
+        try {
+            if (!projectService.updateProject(project, AppUtils.splitVisaMember(listMemberVISA))) {
+                return "redirect:/project/error";
+            }
+            return "redirect:/project/list";
+        } catch (ObjectOptimisticLockingFailureException e) {
+            model.addAttribute("errorValidate", "false");
+            model.addAttribute("errorUpdate", "true");
+            model.addAttribute("listMember", listMemberVISA);
+            model.addAttribute("type", PAGE_TYPE_EDIT);
+            model.addAttribute("existProject", false);
+            model.addAttribute("groupProject", groupService.getAllGroup());
+            return "new";// template new
         }
-        return "redirect:/project/list";
     }
 
     /**
@@ -253,8 +269,12 @@ public class PimController {
         try {
             projectService.deleteProjectByListIdAndNewStatus(projectIds);
             return "success";
-        } catch (Exception e) {
-            return "fail";
+        } catch (NoSuchElementException | ObjectOptimisticLockingFailureException e) {
+            return "fail_null";
+            // e.printStackTrace();
+        } catch (DifferenceStatusProjectDeleteException e) {
+            return "fail_status";
+            // e.printStackTrace();
         }
     }
 
@@ -270,9 +290,12 @@ public class PimController {
         try {
             projectService.deleteProjectByIdAndNewStatus(idProject);
             return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
+        } catch (NoSuchElementException | ObjectOptimisticLockingFailureException e1) {
+            return "fail_null";
+            // e1.printStackTrace();
+        } catch (DifferenceStatusProjectDeleteException e1) {
+            return "fail_status";
+            // e1.printStackTrace();
         }
     }
 
@@ -289,12 +312,12 @@ public class PimController {
     }
 
     /**
-     * Check visa member exist
+     * Function Check visa member exist
      * 
      * @param visa
      * @return list visa not exist in db
      */
     private String checkByVisa(String[] visa) {
-        return visa == null ? "" : employeeService.checkedEmployee(visa);
+        return (visa == null || visa.length == 0) ? "" : employeeService.checkedEmployee(visa);
     }
 }

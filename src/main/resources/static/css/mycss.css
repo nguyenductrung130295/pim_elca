@@ -96,7 +96,10 @@ label{
 #text-search{
   width:100%;
 }
-#error_number_project{
+.cursor-pointer{
+  cursor:pointer;
+}
+.display-none{
   display:none;
 }
 .table{

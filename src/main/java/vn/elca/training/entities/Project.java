@@ -10,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -59,7 +60,7 @@ public class Project extends Version {
 
     @Override
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
         return super.getId();
     }
@@ -70,6 +71,7 @@ public class Project extends Version {
     }
 
     @Override
+    @javax.persistence.Version
     @Column(nullable = false)
     public int getVersion() {
         return super.getVersion();
@@ -80,7 +82,7 @@ public class Project extends Version {
         super.setVersion(version);
     }
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, unique = true)
     public int getProjectNumber() {
         return projectNumber;
     }

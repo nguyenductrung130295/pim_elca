@@ -67,13 +67,17 @@ $("#btn_delete").click(function(){
 			},
 			success:function(data){
 				if(data === "success"){
-					for(var i=checkboxs.length-1;i>=0;i--){
-						if(checkboxs[i].checked){
-							checkboxs[i].parentElement.parentElement.remove();
-						}
-					}
+					switchPage($("#page-number").val());
+//					for(var i=checkboxs.length-1;i>=0;i--){
+//						if(checkboxs[i].checked){
+//							checkboxs[i].parentElement.parentElement.remove();
+//						}
+//					}					
+				}else if(data === "fail_null"){
+					//window.location.href="/project/error";
+					$("#error_delete_null").show();
 				}else{
-					window.location.href="/project/error";	
+					$("#error_delete_status").show();
 				}
 						
 			},
@@ -152,10 +156,14 @@ function deleteItem(aTag, idProject, nameProject){
 			},
 			success:function(data){
 				if(data==="success"){
-					aTag.parentNode.parentNode.remove();
-				}else{
+					//aTag.parentNode.parentNode.remove();
+					switchPage($("#page-number").val());
+				}else if(data === "fail_null"){
 //					console.log("error delete item" +nameProject);
-					window.location.href="/project/error";
+					//window.location.href="/project/error";
+					$("#error_delete_null").show();
+				}else{
+					$("#error_delete_status").show();
 				}
 			},
 			error:function(){
@@ -201,39 +209,51 @@ $("#pro_member").keyup(function(){
 	})
 })
 
-$(document).ready(function(){
-	console.log("read document");
-	$("#select_status").val($("#searchStatusQuery").val());
-	$("#pro_num").keyup(function(){
-		if($("#pro_num").attr("readonly") == undefined && $("#pro_num").val()!==""){
-			$.ajax({
-				url:"/project/checkprojectid",
-				data:{
-					project_number : $("#pro_num").val()
-				},
-				error:function(){
-//					console.log("error ajax check id");
-					window.location.href="/project/error";
-				},
-				success:function(data){
-					console.log("data: "+data);
-					if(data ==='success'){
-						$("#error_number_project").hide();
-						$("#pro_num").css("border-color","#ccc");
-						 $("#sumit_exists").val("false");
-					}else if(data === 'error'){
-						$("#pro_num").css("border-color","red");
-						$("#error_number_project").show();
-						$("#sumit_exists").val("true");
-					}
+$("#pro_member").focusout(function(){
+	if($("#pro_member").val()===""){
+		$("#error_member").hide();
+	}
+})
+
+$("#pro_num").on('keyup',function(event){
+	handleProjectNumber();
+});
+
+function handleProjectNumber(){
+	if($("#pro_num").attr("readonly") == undefined && $("#pro_num").val()!==""){
+		$.ajax({
+			url:"/project/checkprojectid",
+			data:{
+				project_number : $("#pro_num").val()
+			},
+			error:function(){
+				window.location.href="/project/error";
+			},
+			success:function(data){
+				console.log("data: "+data);
+				if(data ==='success'){
+					$("#error_number_project").hide();
+					$("#pro_num").css("border-color","#ccc");
+					 $("#sumit_exists").val("false");
+				}else if(data === 'error'){
+					$("#pro_num").css("border-color","red");
+					$("#error_number_project").show();
+					$("#sumit_exists").val("true");
 				}
-			})
-		}else{
-			$("#error_number_project").hide();
-			$("#pro_num").css("border-color","#ccc");
-		}
-		
-	});
+			}
+		})
+	}else{
+		$("#error_number_project").hide();
+		$("#pro_num").css("border-color","#ccc");
+	}
+}
+/**
+ * 
+ * @returns
+ */
+$(document).ready(function(){
+	$("#select_status").val($("#searchStatusQuery").val());
+	
 	hightlighError();
 
 })

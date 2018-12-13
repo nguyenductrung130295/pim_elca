@@ -2,6 +2,7 @@ package vn.elca.training.services;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -10,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,7 @@ import vn.elca.training.entities.Employee;
 import vn.elca.training.entities.Group;
 import vn.elca.training.entities.Project;
 import vn.elca.training.entities.QProject;
+import vn.elca.training.exception.DifferenceStatusProjectDeleteException;
 import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 import vn.elca.training.utils.AppUtils;
 import vn.elca.training.utils.ProjectStatusEnum;
@@ -96,7 +99,7 @@ public class ProjectServiceImp implements IProjectService {
      * Set member for project and save project to db with in transaction
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean createProject(Project project, String[] visas) {
         project.setEmployees(employeeRepository.findByVisaList(visas));
         if (projectRepository.saveAndFlush(project) == null) {
@@ -109,16 +112,11 @@ public class ProjectServiceImp implements IProjectService {
      * Update project to database with in transaction. Handle concurrent update with version. {@inheritDoc}
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateProject(Project projectUpdate, String[] splitVisaMember) {
+    @Transactional
+    public boolean updateProject(Project projectUpdate, String[] splitVisaMember)
+            throws ObjectOptimisticLockingFailureException {
         if (splitVisaMember.length > 0) {
             projectUpdate.setEmployees(employeeRepository.findByVisaList(splitVisaMember));
-        }
-        Project projectCurrent = projectRepository.findById(projectUpdate.getId()).get();
-        if (projectCurrent.getVersion() == projectUpdate.getVersion()) {
-            projectUpdate.setVersion(projectCurrent.getVersion() + 1);
-        } else {
-            return false;
         }
         return projectRepository.saveAndFlush(projectUpdate) == null ? false : true;
     }
@@ -128,8 +126,16 @@ public class ProjectServiceImp implements IProjectService {
      */
     @Override
     @Transactional
-    public void deleteProjectByIdAndNewStatus(Long id) throws Exception {
-        projectRepository.deleteByIdAndStatus(id, ProjectStatusEnum.NEW);
+    public void deleteProjectByIdAndNewStatus(Long id) throws NoSuchElementException,
+            ObjectOptimisticLockingFailureException, DifferenceStatusProjectDeleteException {
+        Project proj = projectRepository.findById(id).get();
+        if (proj != null) {
+            if (ProjectStatusEnum.NEW.equals(proj.getStatus())) {
+                projectRepository.deleteByIdAndStatus(id, ProjectStatusEnum.NEW);
+            } else {
+                throw new DifferenceStatusProjectDeleteException();
+            }
+        }
     }
 
     /**
@@ -137,9 +143,11 @@ public class ProjectServiceImp implements IProjectService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public void deleteProjectByListIdAndNewStatus(Long[] listProjectIds) throws Exception {
+    public void deleteProjectByListIdAndNewStatus(Long[] listProjectIds) throws NoSuchElementException,
+            ObjectOptimisticLockingFailureException, DifferenceStatusProjectDeleteException {
         for (Long id : listProjectIds) {
-            projectRepository.deleteByIdAndStatus(id, ProjectStatusEnum.NEW);
+            deleteProjectByIdAndNewStatus(id);
+            // projectRepository.deleteByIdAndStatus(id, ProjectStatusEnum.NEW);
         }
     }
 

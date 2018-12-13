@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="col-md-4 text-right pad-right40 mar-top25"> <a href="#" id="en_lang" class="new-menu-style">EN</a> | <a href="#" id="fr_lang" class="new-menu-style">FR</a></div>
-    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style" th:text="#{laebl.help}"></a><a th:text="#{label.logout}" style="margin-left:20px"></a></div>
+    <div class="col-md-2 mar-top25"><a href="#" class="new-menu-style cursor-pointer" th:text="#{laebl.help}"></a><a class="cursor-pointer" th:text="#{label.logout}" style="margin-left:20px"></a></div>
     
   </div>
 </header>
@@ -39,13 +39,19 @@
 <br>
   <h4 th:text="#{label.title.project_list}"></h4>
   <hr>
+  <div class="display-none alert alert-danger" id="error_delete_null">
+    <strong th:text="#{error.delete_concurrent}"></strong>
+  </div>
+  <div class="display-none alert alert-danger" id="error_delete_status">
+    <strong th:text="#{error.delete_notnew}"></strong>
+  </div>
   <form class="form-inline" id="form-search" th:action="@{query}" method="post">
     <div class="col-md-4-cus">
       <input type="text" th:value="${strQuery}" autofocus name="text_search" class="form-control" id="text-search" th:placeholder="#{text.placeholder_search}">
     </div>
     <input type="hidden" name="status_search" id="searchStatusQuery" th:value="${statusQuery}">
     <div class="col-md-2-cus" style="padding-left:8px;">
-      <select class="form-control" id="select_status">
+      <select class="form-control cursor-pointer" id="select_status">
         <option value="" th:text="#{label.title.project_status}"></option>
         <option value="NEW" th:text="#{project.status.new}"></option>
         <option value="PLA" th:text="#{project.status.planned}"></option>
@@ -57,7 +63,7 @@
       <input type="submit" th:value="#{button.search_project}" class="btn btn-primary" style="width:70%;">
     </div>
     <div class="col-md-2-cus" style="padding-top:5px;">
-      <a id="btn_reset_search" th:text="#{button.search_reset}"></a>
+      <a class="cursor-pointer" id="btn_reset_search" th:text="#{button.search_reset}"></a>
     </div>
   </form>
   <br>
@@ -79,7 +85,7 @@
     <th:foreach th:each="proj : ${projectList.content}">
       <tr>
           <td class="text-center">
-            <input type="checkbox" class="checkbox-cus" th:value="${proj.id}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
+            <input type="checkbox" class="checkbox-cus cursor-pointer" th:value="${proj.id}" th:disabled="${#strings.toString(proj.status) == 'NEW' ?false:true}">
           </td>
           <td class="text-right"><a th:href="${proj.id}+'/edit'" th:text="${proj.projectNumber}"></a></td>
           <td th:text="${proj.name}"></td>
@@ -93,7 +99,7 @@
           <td th:text="${proj.customer}"></td>
           <td th:text="${#dates.format(proj.startDate,'yyyy-MM-dd')}" class="text-center"></td>
           <td class="text-center">
-            <a th:if="${#strings.toString(proj.status) == 'NEW'}" th:id="${proj.id}" th:title="${proj.name}" th:onclick="deleteItem(this,this.id,this.title)"><img src="/img/delete_icon.png"/></a>
+            <a class="cursor-pointer" th:if="${#strings.toString(proj.status) == 'NEW'}" th:id="${proj.id}" th:title="${proj.name}" th:onclick="deleteItem(this,this.id,this.title)"><img src="/img/delete_icon.png"/></a>
           </td>
         </tr>
     </th:foreach>
@@ -109,6 +115,7 @@
     </div>
   </div>
   <div id="pagin" class="text-right">
+  <input type="hidden" th:value="${projectList.number}" id="page-number">
     <ul class="pagination">
     <li th:if="${projectList.hasPrevious()}"><a href="#" th:id="${projectList.number-1}" th:onclick="switchPage(this.id)">&lt&lt</a></li>
     <th:block th:each="i : ${#numbers.sequence(0,projectList.totalPages-1)}">

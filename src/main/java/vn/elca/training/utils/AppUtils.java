@@ -32,15 +32,19 @@ public class AppUtils {
      */
     public static String[] splitVisaMember(String visaString) {
         int n = 0;
-        String[] visas = visaString.split(",");
-        String[] results = new String[visas.length];
-        for (int i = 0; i < visas.length; i++) {
-            if (visas[i].length() > 0) {
-                results[n] = visas[i];
-                n++;
+        String[] results;
+        if (visaString.length() > 0) {
+            String[] visas = visaString.split(",");
+            results = new String[visas.length];
+            for (int i = 0; i < visas.length; i++) {
+                if (visas[i].length() > 0) {
+                    results[n] = visas[i].trim().toUpperCase();
+                    n++;
+                }
             }
+            return results;
         }
-        return results;
+        return null;
     }
 
     /**
