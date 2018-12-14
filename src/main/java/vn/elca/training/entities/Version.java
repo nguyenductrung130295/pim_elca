@@ -5,10 +5,7 @@ public abstract class Version {
     protected int version;
 
     public Version() {
-    }
-
-    public Version(int version) {
-        this.version = version;
+        this.version = 1;
     }
 
     public Long getId() {
@@ -24,11 +21,6 @@ public abstract class Version {
     }
 
     public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public Version(Long id, int version) {
-        this.id = id;
         this.version = version;
     }
 }

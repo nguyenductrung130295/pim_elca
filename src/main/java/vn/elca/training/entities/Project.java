@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import vn.elca.training.utils.ProjectStatusEnum;
@@ -36,20 +37,9 @@ public class Project extends Version {
         super();
     }
 
-    public Project(int version, int projectNumber, String name, String customer, ProjectStatusEnum status,
-            Date startDate, Date endDate) {
-        super(version);
-        this.projectNumber = projectNumber;
-        this.name = name;
-        this.customer = customer;
-        this.status = status;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
-    public Project(Long id, int version, int projectNumber, String name, String customer, ProjectStatusEnum status,
-            Date startDate, Date endDate) {
-        super(id, version);
+    public Project(int projectNumber, String name, String customer, ProjectStatusEnum status, Date startDate,
+            Date endDate) {
+        super();
         this.projectNumber = projectNumber;
         this.name = name;
         this.customer = customer;
@@ -60,7 +50,8 @@ public class Project extends Version {
 
     @Override
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_project")
+    @SequenceGenerator(name = "seq_project", sequenceName = "SEQUENCE_PROJECT", initialValue = 1)
     public Long getId() {
         return super.getId();
     }

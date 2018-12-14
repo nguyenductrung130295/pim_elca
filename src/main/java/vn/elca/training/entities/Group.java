@@ -62,11 +62,6 @@ public class Group extends Version {
         this.projects = projects;
     }
 
-    public Group(Long id, int version, String name) {
-        super(id, version);
-        this.name = name;
-    }
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_leader_id")
     public Employee getLeader() {
@@ -77,8 +72,8 @@ public class Group extends Version {
         this.leader = leader;
     }
 
-    public Group(int version, String name) {
-        super(version);
+    public Group(String name) {
+        super();
         this.name = name;
     }
 

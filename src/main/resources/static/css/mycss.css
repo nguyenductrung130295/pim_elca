@@ -116,4 +116,8 @@ label{
 }
 .paging_disabled{
   background-color:#d2d2d2;
+  
 }
+.paging_disabled a{
+    text-decoration:underline;
+}  

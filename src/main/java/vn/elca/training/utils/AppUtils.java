@@ -7,7 +7,7 @@ import vn.elca.training.entities.Project;
 
 public class AppUtils {
     public static final String MSG_NUMBER_ALREADY = "The projet number already existed.";
-    public static final int ROW_ON_PAGE = 3;
+    public static final int ROW_ON_PAGE = 7;
     public static final int PAGE_NUMBER_DEFAULT = 0;
 
     /**

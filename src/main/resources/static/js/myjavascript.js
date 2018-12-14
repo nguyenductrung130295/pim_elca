@@ -1,94 +1,24 @@
+//-----------------------------------------COMMON-----------------------------------------------------
+/**
+ * chang language to fr for application when click FR hyperlink on top right screen
+ * @returns
+ */
 $("#fr_lang").click(function(){
-	console.log("french");
 	window.location.replace('?lang=fr');
 });
+/**
+ * change language to en for application when click EN hyperlink on top right screen
+ * @returns
+ */
 $("#en_lang").click(function(){
 	console.log("english");
 	window.location.replace('?lang=en');
 });
-$("#btn_reset_search").click(function(){
-	$("#text-search").val("");
-	$("#select_status").val("");
-	$("#searchStatusQuery").val("");
-	window.location.href="query?status_search=&text_search=";
-});
-
-$("#select_status").change(function(){
-	$("#searchStatusQuery").val($("#select_status").val());
-});
-
-$(".checkbox-cus").change(function(){
-	var checkedItems = countChecked($(".checkbox-cus"));
-	if(checkedItems>0){
-		$("#counter_select").text(checkedItems);
-		$("#footer-table").show();
-	}else{
-		$("#footer-table").hide();
-	}
-})
-
-function showBincycle(){
-	var checkbox = $(".checkbox-cus");
-	for(var i=0;i<checkbox.length;i++){
-		if(checkbox[i].checked){
-			checkbox[i].parentNode.parentNode.lastElementChild.lastElementChild.firstElementChild.style.display="block";
-		}else{
-			checkbox[i].parentNode.parentNode.lastElementChild.lastElementChild.firstElementChild.style.display="none";
-		}
-	}
-}
-
-function countChecked(checkbox){
-	var count = 0;
-	for(var i=0;i<checkbox.length;i++){
-		if(checkbox[i].checked){
-			count++;
-		}
-	}
-	return count;
-}
-
-$("#btn_delete").click(function(){
-	var conf = confirm("Delete all items selected.Are you sure?");
-	if(conf){
-		$("#footer-table").hide();
-		var list = [];
-		var checkboxs = $(".checkbox-cus");
-		for(var i=0;i<checkboxs.length;i++){
-			if(checkboxs[i].checked){
-				list.push(checkboxs[i].value);
-			}
-		}
-		$.ajax({
-			url:"/project/delallselect",
-			method:"post",
-			data:{
-				list_number:list
-			},
-			success:function(data){
-				if(data === "success"){
-					switchPage($("#page-number").val());
-//					for(var i=checkboxs.length-1;i>=0;i--){
-//						if(checkboxs[i].checked){
-//							checkboxs[i].parentElement.parentElement.remove();
-//						}
-//					}					
-				}else if(data === "fail_null"){
-					//window.location.href="/project/error";
-					$("#error_delete_null").show();
-				}else{
-					$("#error_delete_status").show();
-				}
-						
-			},
-			error:function(){
-				window.location.href="/project/error";
-			}
-		})
-		
-	}
-})
-
+//--------------------------------------------NEW/EDIT TEMPLATES--------------------------------------
+/**
+ * Validate field start date and endate to start date alway less equal than end date
+ * @returns
+ */
 $("#pro_enddate").keyup(function(){
 	if($("#pro_enddate").val().length == 10 && $("#pro_startdate").val().length == 10){
 		var date_start = new Date($("#pro_startdate").val());
@@ -110,7 +40,10 @@ $("#pro_startdate").keyup(function(){
 		
 	}
 })
-
+/**
+ * Hight error field if has error mandatory and others
+ * @returns
+ */
 function hightlighError(){
 	var error = $("#have_errors").val();
 	if(error){
@@ -146,39 +79,11 @@ function hightlighError(){
 	}
 }
 
-function deleteItem(aTag, idProject, nameProject){
-	if(confirm("Delete project name:" + nameProject +". Are you sure?")){
-		$.ajax({
-			url:"/project/delete",
-			method:"post",
-			data:{
-				idproject:idProject
-			},
-			success:function(data){
-				if(data==="success"){
-					//aTag.parentNode.parentNode.remove();
-					switchPage($("#page-number").val());
-				}else if(data === "fail_null"){
-//					console.log("error delete item" +nameProject);
-					//window.location.href="/project/error";
-					$("#error_delete_null").show();
-				}else{
-					$("#error_delete_status").show();
-				}
-			},
-			error:function(){
-//				console.log("error request");
-				window.location.href="/project/error";
-			}
-		})
-	}
-}
-
-function switchPage(pageNumber){
-	window.location.replace('?p='+pageNumber+"&text_search="+$("#text-search").val()+"&status_search="+$("#searchStatusQuery").val());
-}
-
-
+/**
+ * Check employee is exist or not. get string visa member and convert to visas array list. 
+ * call ajax and show error message if has any visa existed on DB
+ * @returns
+ */
 $("#pro_member").keyup(function(){
 	var list = $("#pro_member").val().split(",");
 	var list_actual = [];
@@ -215,6 +120,11 @@ $("#pro_member").focusout(function(){
 	}
 })
 
+/**
+ * Check existed project number when this field on change by keyup event. Hight light and show message if not existed
+ * @param event
+ * @returns
+ */
 $("#pro_num").on('keyup',function(event){
 	handleProjectNumber();
 });
@@ -247,13 +157,150 @@ function handleProjectNumber(){
 		$("#pro_num").css("border-color","#ccc");
 	}
 }
+
+//--------------------------------------------LIST TEMPLATES------------------------------------------
+/**
+ * reset search text query and status project to empty when click "Reset Search" hyperlink
+ * to empty and reload with list all project
+ * @returns
+ */
+$("#btn_reset_search").click(function(){
+	$("#text-search").val("");
+	$("#select_status").val("");
+	$("#searchStatusQuery").val("");
+	window.location.href="query?status_search=&text_search=";
+});
+/**
+ * Handle change event on status select search form. set value to input hidden 
+ * @returns
+ */
+$("#select_status").change(function(){
+	$("#searchStatusQuery").val($("#select_status").val());
+});
+/**
+ * Show delete all label when any checkbox row list be selected, otherwise
+ * @returns
+ */
+$(".checkbox-cus").change(function(){
+	var checkedItems = countChecked($(".checkbox-cus"));
+	if(checkedItems>0){
+		$("#counter_select").text(checkedItems);
+		$("#footer-table").show();
+	}else{
+		$("#footer-table").hide();
+	}
+})
+
+function countChecked(checkbox){
+	var count = 0;
+	for(var i=0;i<checkbox.length;i++){
+		if(checkbox[i].checked){
+			count++;
+		}
+	}
+	return count;
+}
+
+/**
+ * call ajax to request delete all items be selected when click label or icon delete all
+ * @returns
+ */
+$("#btn_delete").click(function(){
+	deleteAll();
+})
+
+$("#btn_delete_all").click(function(){
+	deleteAll();
+})
+/**
+ * get array list checked to param data request,reload if delete success or show message if has error
+ * @returns
+ */
+function deleteAll(){
+	var conf = confirm("Delete all items selected.Are you sure?");
+	if(conf){
+		$("#footer-table").hide();
+		var list = [];
+		var checkboxs = $(".checkbox-cus");
+		for(var i=0;i<checkboxs.length;i++){
+			if(checkboxs[i].checked){
+				list.push(checkboxs[i].value);
+			}
+		}
+		$.ajax({
+			url:"/project/delallselect",
+			method:"post",
+			data:{
+				list_number:list
+			},
+			success:function(data){
+				if(data === "success"){
+					switchPage($("#page-number").val());
+//					for(var i=checkboxs.length-1;i>=0;i--){
+//						if(checkboxs[i].checked){
+//							checkboxs[i].parentElement.parentElement.remove();
+//						}
+//					}					
+				}else if(data === "fail_null"){
+					$("#error_delete_null").show();
+				}else{
+					$("#error_delete_status").show();
+				}
+						
+			},
+			error:function(){
+				window.location.href="/project/error";
+			}
+		})
+		
+	}
+}
+/**
+ * delete single project when click icon delete on screen list project
+ * reload page after delete success or show message if have errors
+ * @param aTag
+ * @param idProject
+ * @param nameProject
+ * @returns
+ */
+function deleteItem(aTag, idProject, nameProject){
+	if(confirm("Delete project name:" + nameProject +". Are you sure?")){
+		$.ajax({
+			url:"/project/delete",
+			method:"post",
+			data:{
+				idproject:idProject
+			},
+			success:function(data){
+				if(data==="success"){
+					switchPage($("#page-number").val());
+				}else if(data === "fail_null"){
+					$("#error_delete_null").show();
+				}else{
+					$("#error_delete_status").show();
+				}
+			},
+			error:function(){
+				window.location.href="/project/error";
+			}
+		})
+	}
+}
+/**
+ * Reload page when delete project
+ * @param pageNumber
+ * @returns
+ */
+function switchPage(pageNumber){
+	window.location.replace('?p='+pageNumber+"&text_search="+$("#text-search").val()+"&status_search="+$("#searchStatusQuery").val());
+}
+
+
 /**
  * 
  * @returns
  */
 $(document).ready(function(){
-	$("#select_status").val($("#searchStatusQuery").val());
-	
+	$("#select_status").val($("#searchStatusQuery").val());	
 	hightlighError();
-
 })

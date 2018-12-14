@@ -28,16 +28,8 @@ public class Employee extends Version {
         super();
     }
 
-    public Employee(Long id, int version, String visa, String firstName, String lastName, Date birthDate) {
-        super(id, version);
-        this.visa = visa;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-    }
-
-    public Employee(int version, String visa, String firstName, String lastName, Date birthDate) {
-        super(version);
+    public Employee(String visa, String firstName, String lastName, Date birthDate) {
+        super();
         this.visa = visa;
         this.firstName = firstName;
         this.lastName = lastName;
