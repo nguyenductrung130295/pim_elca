@@ -12,10 +12,6 @@ import vn.elca.training.exception.ProjectNumberAlreadyExistsException;
 public interface IProjectService {
     Project findProjectById(Long id);
 
-    Page<Project> findProjectAll(int pageNumberDefault, int rowOnPage);
-
-    Page<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage);
-
     boolean createProject(Project project, String[] visas);
 
     void deleteProjectByIdAndNewStatus(Long id) throws ObjectOptimisticLockingFailureException, NullPointerException,
@@ -31,4 +27,9 @@ public interface IProjectService {
     String getListMemberVisaOfProject(Project project);
 
     boolean updateProject(Project project, String[] splitVisaMember);
+
+    Page<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage, String sortBy,
+            String sortType);
+
+    Page<Project> findProjectAll(int pageNum, int rowOnPage, String sortBy, String sortType);
 }

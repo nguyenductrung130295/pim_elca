@@ -50,6 +50,8 @@
       <input type="text" th:value="${strQuery}" autofocus name="text_search" class="form-control" id="text-search" th:placeholder="#{text.placeholder_search}">
     </div>
     <input type="hidden" name="status_search" id="searchStatusQuery" th:value="${statusQuery}">
+    <input type="hidden" name="sort_by" th:value="${orderBy}" id="sort_by">
+    <input type="hidden" name="sort_type" th:value="${orderType}" id="sort_type">
     <div class="col-md-2-cus" style="padding-left:8px;">
       <select class="form-control cursor-pointer" id="select_status">
         <option value="" th:text="#{label.title.project_status}"></option>
@@ -73,10 +75,25 @@
     <thead>
       <tr>
         <th></th>
-        <th class="col-md-1 text-center" th:text="#{project.number}"></th>
-        <th class="col-md-4" th:text="#{project.name}"></th>
+        <th class="col-md-1 text-center cursor-pointer" id="sort_number">
+          <span th:text="#{project.number}"></span>
+          <img class="arrow_sort disabled img_right" src="/img/arrow_right.png">
+          <img class="arrow_sort disabled img_down" src="/img/arrow_down.png">
+          <img class="arrow_sort disabled img_up" src="/img/arrow_up.png">
+        </th>
+        <th class="col-md-4 cursor-pointer" id="sort_name">
+          <span th:text="#{project.name}" class="floatleft"></span>
+          <img class="arrow_sort floatright disabled img_right" src="/img/arrow_right.png">
+          <img class="arrow_sort floatright disabled img_down" src="/img/arrow_down.png">
+          <img class="arrow_sort floatright disabled img_up" src="/img/arrow_up.png">
+        </th>
         <th class="col-md-2" th:text="#{project.status}"></th>
-        <th class="col-md-2" th:text="#{project.customer}"></th>
+        <th class="col-md-2 cursor-pointer" id="sort_customer">
+          <span th:text="#{project.customer}" class="floatleft"></span>
+          <img class="arrow_sort floatright disabled img_right" src="/img/arrow_right.png">
+          <img class="arrow_sort floatright disabled img_down" src="/img/arrow_down.png">
+          <img class="arrow_sort floatright disabled img_up" src="/img/arrow_up.png">
+        </th>
         <th class="col-md-2 text-center" th:text="#{project.start_date}"></th>
         <th class="col-md-1 text-center" th:text="#{project.delete}"></th>
       </tr>
@@ -131,7 +148,7 @@
 <footer></footer>
 <script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="/js/bootstrap.js"></script>
-<script type="text/javascript" src="/js/myjavascript.js"></script>
+<script th:inline="javascript" src="/js/myjavascript.js"></script>
 
 
 </body>

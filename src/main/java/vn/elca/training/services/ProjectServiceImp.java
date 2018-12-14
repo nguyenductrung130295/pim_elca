@@ -11,6 +11,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -54,41 +55,45 @@ public class ProjectServiceImp implements IProjectService {
      * Get all project list
      */
     @Override
-    public Page<Project> findProjectAll(int pageNum, int rowOnPage) {
-        return projectRepository.findAllPaging(PageRequest.of(pageNum, rowOnPage));
+    public Page<Project> findProjectAll(int pageNum, int rowOnPage, String sortBy, String sortType) {
+        Sort sort = AppUtils.SORT_TYPE_ASC.equals(sortType) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).ascending();
+        return projectRepository.findAllPaging(PageRequest.of(pageNum, rowOnPage, sort));
     }
 
     /**
      * Search project to list by condition query search {@inheritDoc}
      */
     @Override
-    public Page<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage) {
+    public Page<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage,
+            String sortBy, String sortType) {
         queryStr = queryStr.toUpperCase();
+        Sort sort = AppUtils.SORT_TYPE_ASC.equals(sortType) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).ascending();
         Page<Project> listResult;
         if ("".equals(queryStr)) {
             if ("".equals(queryStatus)) {
-                listResult = projectRepository.findAllPaging(PageRequest.of(pageNum, rowOnPage));
+                listResult = projectRepository.findAllPaging(PageRequest.of(pageNum, rowOnPage, sort));
             } else {
                 listResult = projectRepository.findByStatus(ProjectStatusEnum.getProjectStatusByCode(queryStatus),
-                        PageRequest.of(pageNum, rowOnPage));
+                        PageRequest.of(pageNum, rowOnPage, sort));
             }
         } else {
             try {
                 int number_project = Integer.parseInt(queryStr);
                 if ("".equals(queryStatus)) {
                     listResult = projectRepository.findByQuery(queryStr, number_project,
-                            PageRequest.of(pageNum, rowOnPage));
+                            PageRequest.of(pageNum, rowOnPage, sort));
                 } else {
                     listResult = projectRepository.findByQuery(queryStr,
                             ProjectStatusEnum.getProjectStatusByCode(queryStatus), number_project,
-                            PageRequest.of(pageNum, rowOnPage));
+                            PageRequest.of(pageNum, rowOnPage, sort));
                 }
             } catch (NumberFormatException e) {
                 if ("".equals(queryStatus)) {
-                    listResult = projectRepository.findByQuery(queryStr, PageRequest.of(pageNum, rowOnPage));
+                    listResult = projectRepository.findByQuery(queryStr, PageRequest.of(pageNum, rowOnPage, sort));
                 } else {
                     listResult = projectRepository.findByQuery(queryStr,
-                            ProjectStatusEnum.getProjectStatusByCode(queryStatus), PageRequest.of(pageNum, rowOnPage));
+                            ProjectStatusEnum.getProjectStatusByCode(queryStatus),
+                            PageRequest.of(pageNum, rowOnPage, sort));
                 }
             }
         }

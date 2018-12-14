@@ -33,7 +33,7 @@ import vn.elca.training.services.IProjectService;
 import vn.elca.training.utils.AppUtils;
 
 @Controller("project")
-@SessionAttributes({ "strQuery", "statusQuery" })
+@SessionAttributes({ "strQuery", "statusQuery", "orderBy", "orderType" })
 @RequestMapping("/project")
 @Scope("session")
 public class PimController {
@@ -178,17 +178,28 @@ public class PimController {
      * @return
      */
     @RequestMapping("/list")
-    ModelAndView listProject(@RequestParam(value = "p") Optional<Integer> page) {
+    ModelAndView listProject(@RequestParam(value = "p") Optional<Integer> page,
+            @RequestParam(value = "sort_by") Optional<String> sortBy,
+            @RequestParam(value = "sort_type") Optional<String> sortType) {
         int pageNumber = AppUtils.PAGE_NUMBER_DEFAULT;
+        sessionValue.setOrderBy(
+                AppUtils.verifySortByParam(sortBy.isPresent() ? sortBy.get().toString() : AppUtils.SORT_BY_DEFAULT));
+        sessionValue.setSortType(AppUtils
+                .verifySortTypeParam(sortType.isPresent() ? sortType.get().toString() : AppUtils.SORT_TYPE_ASC));
         if (page.hashCode() != 0) {
             pageNumber = page.hashCode();
         }
         if ("".equals(sessionValue.getTextQuery()) && "".equals(sessionValue.getStatusQuery())) {
             return new ModelAndView("list", "projectList",
-                    projectService.findProjectAll(pageNumber, AppUtils.ROW_ON_PAGE));
+                    projectService.findProjectAll(pageNumber, AppUtils.ROW_ON_PAGE, sessionValue.getOrderBy(),
+                            sessionValue.getSortType())).addObject("orderBy", sessionValue.getOrderBy())
+                                    .addObject("orderType", sessionValue.getSortType());
         } else {
-            return new ModelAndView("list", "projectList", projectService.findProjectByQuery(
-                    sessionValue.getTextQuery(), sessionValue.getStatusQuery(), pageNumber, AppUtils.ROW_ON_PAGE));
+            return new ModelAndView("list", "projectList",
+                    projectService.findProjectByQuery(sessionValue.getTextQuery(), sessionValue.getStatusQuery(),
+                            pageNumber, AppUtils.ROW_ON_PAGE, sessionValue.getOrderBy(), sessionValue.getSortType()))
+                                    .addObject("orderBy", sessionValue.getOrderBy())
+                                    .addObject("orderType", sessionValue.getSortType());
         }
     }
 
@@ -202,16 +213,20 @@ public class PimController {
     @PostMapping("/query")
     ModelAndView query(@RequestParam(value = "p") Optional<Integer> page,
             @RequestParam(value = "text_search") String strQuery,
-            @RequestParam(value = "status_search") String statusQuery) {
+            @RequestParam(value = "status_search") String statusQuery, @RequestParam("sort_by") String sortBy,
+            @RequestParam("sort_type") String sortType) {
         int pageNumber = AppUtils.PAGE_NUMBER_DEFAULT;
         if (page.hashCode() != 0) {
             pageNumber = page.hashCode();
         }
+        sessionValue.setOrderBy(AppUtils.verifySortByParam(sortBy));
+        sessionValue.setSortType(AppUtils.verifySortTypeParam(sortType));
         sessionValue.setTextQuery(strQuery);
         sessionValue.setStatusQuery(statusQuery);
         return new ModelAndView("list", "projectList",
-                projectService.findProjectByQuery(strQuery, statusQuery, pageNumber, AppUtils.ROW_ON_PAGE))
-                        .addObject("strQuery", strQuery).addObject("statusQuery", statusQuery);
+                projectService.findProjectByQuery(strQuery, statusQuery, pageNumber, AppUtils.ROW_ON_PAGE,
+                        sessionValue.getOrderBy(), sessionValue.getSortType())).addObject("strQuery", strQuery)
+                                .addObject("statusQuery", statusQuery);
     }
 
     /**
@@ -219,7 +234,10 @@ public class PimController {
      */
     @GetMapping("/query")
     String queryreset(@RequestParam(value = "text_search") String strQuery,
-            @RequestParam(value = "status_search") String statusQuery, Model model) {
+            @RequestParam(value = "status_search") String statusQuery, Model model,
+            @RequestParam("sort_by") String sortBy, @RequestParam("sort_type") String sortType) {
+        sessionValue.setOrderBy(AppUtils.verifySortByParam(sortBy));
+        sessionValue.setSortType(AppUtils.verifySortTypeParam(sortType));
         sessionValue.setTextQuery(strQuery);
         sessionValue.setStatusQuery(statusQuery);
         model.addAttribute("strQuery", "");

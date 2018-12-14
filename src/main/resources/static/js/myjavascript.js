@@ -292,8 +292,52 @@ function deleteItem(aTag, idProject, nameProject){
  * @returns
  */
 function switchPage(pageNumber){
-	window.location.replace('?p='+pageNumber+"&text_search="+$("#text-search").val()+"&status_search="+$("#searchStatusQuery").val());
+	window.location.replace('?p='+pageNumber+"&text_search="+$("#text-search").val()
+			+"&status_search="+$("#searchStatusQuery").val()+"&sort_by="+$("#sort_by").val());
 }
+
+$("#sort_number").click(function(){
+	$("#sort_by").val("projectNumber");
+	switchPage($("#page-number").val());
+});
+$("#sort_name").click(function(){
+	$("#sort_by").val("name");
+	switchPage($("#page-number").val());
+});
+$("#sort_customer").click(function(){
+	$("#sort_by").val("customer");
+	switchPage($("#page-number").val());
+});
+
+function statusSortTable(){
+	if("asc" === $("#sort_type").val()){
+		switch($("#sort_by").val()){
+		case "projectNumber":
+			turnOnOffArrow(true,false,false);
+			break;
+		case "name":
+			turnOnOffArrow(true,false,false);
+			break;
+		case "customer":
+			turnOnOffArrow(true,false,false);
+			break;
+		}
+	}else if("desc" === $("#sort_type").val()){
+		
+	}
+}
+
+function turnOnOffArrow(number,name,customer){
+	if(number){
+		
+	}else if(name){
+		
+	}else{
+		
+	}
+	
+}
+
 
 
 /**
@@ -303,4 +347,5 @@ function switchPage(pageNumber){
 $(document).ready(function(){
 	$("#select_status").val($("#searchStatusQuery").val());	
 	hightlighError();
+	statusSortTable();
 })

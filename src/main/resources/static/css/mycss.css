@@ -121,3 +121,14 @@ label{
 .paging_disabled a{
     text-decoration:underline;
 }  
+.arrow_sort{
+  border:1px solid #ddd;
+  border-radius:2px;
+  margin-left:5px;
+}
+.floatleft{
+  float:left;
+}
+.floatright{
+  float:right;
+}

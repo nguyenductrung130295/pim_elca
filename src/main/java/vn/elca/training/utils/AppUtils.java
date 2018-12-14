@@ -9,6 +9,11 @@ public class AppUtils {
     public static final String MSG_NUMBER_ALREADY = "The projet number already existed.";
     public static final int ROW_ON_PAGE = 7;
     public static final int PAGE_NUMBER_DEFAULT = 0;
+    public static final String SORT_BY_DEFAULT = "projectNumber";
+    public static final String SORT_BY_NAME = "name";
+    public static final String SORT_BY_CUSTOMER = "customer";
+    public static final String SORT_TYPE_ASC = "asc";
+    public static final String SORT_TYPE_DESC = "desc";
 
     /**
      * Function utility to check mandatory field
@@ -62,5 +67,23 @@ public class AppUtils {
             result = result.substring(0, result.length() - 1);
         }
         return result;
+    }
+
+    public static String verifySortByParam(String sortBy) {
+        switch (sortBy) {
+        case "name":
+            return SORT_BY_NAME;
+        case "customer":
+            return SORT_BY_CUSTOMER;
+        default:
+            return SORT_BY_DEFAULT;
+        }
+    }
+
+    public static String verifySortTypeParam(String sortType) {
+        if (SORT_TYPE_DESC.equals(sortType)) {
+            return SORT_TYPE_DESC;
+        }
+        return SORT_TYPE_ASC;
     }
 }

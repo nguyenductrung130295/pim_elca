@@ -21,20 +21,20 @@ public interface IProjectRepository extends JpaRepository<Project, Long>, Queryd
 
     int findVersionById(Long id);
 
-    @Query("select p from Project p order by p.projectNumber")
+    @Query("select p from Project p")
     Page<Project> findAllPaging(Pageable pageble);
 
-    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% order by p.projectNumber")
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str%")
     Page<Project> findByQuery(@Param("str") String queryStr, Pageable pageable);
 
-    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% or p.projectNumber = :num order by p.projectNumber")
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% or p.projectNumber = :num")
     Page<Project> findByQuery(@Param("str") String queryStr, @Param("num") int number_project, Pageable pageble);
 
-    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% and status = :sta order by p.projectNumber")
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% and status = :sta")
     Page<Project> findByQuery(@Param("str") String queryStr, @Param("sta") ProjectStatusEnum projectStatusByCode,
             Pageable pageble);
 
-    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% or p.projectNumber = :num and status = :sta order by p.projectNumber")
+    @Query("select p from Project p where upper(p.customer) like %:str% or upper(p.name) like %:str% or p.projectNumber = :num and status = :sta")
     Page<Project> findByQuery(@Param("str") String queryStr, @Param("sta") ProjectStatusEnum projectStatusByCode,
             @Param("num") int number_project, Pageable pageble);
 }
