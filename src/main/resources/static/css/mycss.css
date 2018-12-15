@@ -132,3 +132,10 @@ label{
 .floatright{
   float:right;
 }
+.img_down,.img_up{
+	background-color:#c7fdf7;
+}
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}

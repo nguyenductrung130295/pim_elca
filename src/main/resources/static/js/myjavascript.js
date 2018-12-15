@@ -292,53 +292,116 @@ function deleteItem(aTag, idProject, nameProject){
  * @returns
  */
 function switchPage(pageNumber){
-	window.location.replace('?p='+pageNumber+"&text_search="+$("#text-search").val()
-			+"&status_search="+$("#searchStatusQuery").val()+"&sort_by="+$("#sort_by").val());
+	window.location.replace('?p='+pageNumber
+			+"&text_search="+$("#text-search").val()
+			+"&status_search="+$("#searchStatusQuery").val()
+			+"&sort_by="+$("#sort_by").val()
+			+"&sort_type="+$("#sort_type").val());
 }
-
+/**
+ * Sort Type And By
+ * @returns
+ */
 $("#sort_number").click(function(){
-	$("#sort_by").val("projectNumber");
-	switchPage($("#page-number").val());
+	changeSortType("projectNumber");	
+	switchPage(0);
 });
+
+
+
+
 $("#sort_name").click(function(){
-	$("#sort_by").val("name");
-	switchPage($("#page-number").val());
+	changeSortType("name");
+	switchPage(0);
 });
 $("#sort_customer").click(function(){
-	$("#sort_by").val("customer");
-	switchPage($("#page-number").val());
+	changeSortType("customer");
+	switchPage(0);
 });
-
-function statusSortTable(){
-	if("asc" === $("#sort_type").val()){
-		switch($("#sort_by").val()){
-		case "projectNumber":
-			turnOnOffArrow(true,false,false);
-			break;
-		case "name":
-			turnOnOffArrow(true,false,false);
-			break;
-		case "customer":
-			turnOnOffArrow(true,false,false);
-			break;
+/**
+ * Change status type of sort
+ * @param sortBy
+ * @returns
+ */
+function changeSortType(sortBy){
+	if(sortBy === $("#sort_by").val()){
+		if("asc" === $("#sort_type").val()){
+			$("#sort_type").val("desc");
+		}else if("desc" === $("#sort_type").val()){
+			$("#sort_type").val("asc");
+		}else{
+			console.log("sort type not asc/desc");
 		}
-	}else if("desc" === $("#sort_type").val()){
-		
+	}else{
+		$("#sort_by").val(sortBy);
+		$("#sort_type").val("asc");
 	}
 }
 
-function turnOnOffArrow(number,name,customer){
-	if(number){
-		
-	}else if(name){
-		
+/**
+ * Show arror sort on header table list project by type status
+ * @returns
+ */
+function statusSortTable(){
+	var sortBy = $("#sort_by").val();
+	if("asc" === $("#sort_type").val()){		
+		if("projectNumber" === sortBy){
+			turnOnOffArrow("#sort_number",false,true,false);
+		}else{
+			turnOnOffArrow("#sort_number",true,false,false);
+		}
+		if("name" === sortBy){
+			turnOnOffArrow("#sort_name",false,true,false);
+		}
+		else{
+			turnOnOffArrow("#sort_name",true,false,false);
+		}
+		if("customer" === sortBy){
+			turnOnOffArrow("#sort_customer",false,true,false);
+		}else{
+			turnOnOffArrow("#sort_customer",true,false,false);
+		}
+	}else if("desc" === $("#sort_type").val()){
+		if("projectNumber" === sortBy){
+			turnOnOffArrow("#sort_number",false,false,true);
+		}else{
+			turnOnOffArrow("#sort_number",true,false,false);
+		}
+		if("name" === sortBy){
+			turnOnOffArrow("#sort_name",false,false,true);
+		}
+		else{
+			turnOnOffArrow("#sort_name",true,false,false);
+		}
+		if("customer" === sortBy){
+			turnOnOffArrow("#sort_customer",false,false,true);
+		}else{
+			turnOnOffArrow("#sort_customer",true,false,false);
+		}
+	}
+}
+
+function turnOnOffArrow(selected,right,down,up){
+	var img_r = $(selected+ " .img_right");
+	var img_d = $(selected+ " .img_down");
+	var img_u = $(selected+ " .img_up");
+	if(right){
+		img_r.show();
 	}else{
-		
+		img_r.hide();
+	}
+	if(down){
+		img_d.show();
+	}else{
+		img_d.hide();
+	}
+	if(up){
+		img_u.show();
+	}else{
+		img_u.hide();
 	}
 	
 }
-
-
 
 /**
  * 
