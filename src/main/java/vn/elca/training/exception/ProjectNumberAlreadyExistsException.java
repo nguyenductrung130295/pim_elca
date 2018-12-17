@@ -4,4 +4,5 @@ public class ProjectNumberAlreadyExistsException extends Exception {
     public ProjectNumberAlreadyExistsException(String message) {
         super(message);
     }
+    // private Integer projectNumber;
 }

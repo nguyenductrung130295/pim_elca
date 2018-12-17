@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -210,39 +209,28 @@ public class PimController {
      * @param statusQuery
      * @return list of project
      */
-    @PostMapping("/query")
+    @RequestMapping("/query")
     ModelAndView query(@RequestParam(value = "p") Optional<Integer> page,
-            @RequestParam(value = "text_search") String strQuery,
-            @RequestParam(value = "status_search") String statusQuery, @RequestParam("sort_by") String sortBy,
-            @RequestParam("sort_type") String sortType) {
+            @RequestParam(value = "text_search") Optional<String> strQuery,
+            @RequestParam(value = "status_search") Optional<String> statusQuery,
+            @RequestParam(value = "sort_by") Optional<String> sortBy,
+            @RequestParam(value = "sort_type") Optional<String> sortType) {
         int pageNumber = AppUtils.PAGE_NUMBER_DEFAULT;
         if (page.hashCode() != 0) {
             pageNumber = page.hashCode();
         }
-        sessionValue.setOrderBy(AppUtils.verifySortByParam(sortBy));
-        sessionValue.setSortType(AppUtils.verifySortTypeParam(sortType));
-        sessionValue.setTextQuery(strQuery);
-        sessionValue.setStatusQuery(statusQuery);
+        sessionValue.setOrderBy(
+                AppUtils.verifySortByParam(sortBy.isPresent() ? sortBy.get().toString() : AppUtils.SORT_BY_DEFAULT));
+        sessionValue.setSortType(AppUtils
+                .verifySortTypeParam(sortType.isPresent() ? sortType.get().toString() : AppUtils.SORT_TYPE_ASC));
+        String statusStr = statusQuery.isPresent() ? statusQuery.get().toString() : "";
+        String textStr = strQuery.isPresent() ? strQuery.get().toString() : "";
+        sessionValue.setTextQuery(textStr);
+        sessionValue.setStatusQuery(statusStr);
         return new ModelAndView("list", "projectList",
-                projectService.findProjectByQuery(strQuery, statusQuery, pageNumber, AppUtils.ROW_ON_PAGE,
-                        sessionValue.getOrderBy(), sessionValue.getSortType())).addObject("strQuery", strQuery)
-                                .addObject("statusQuery", statusQuery);
-    }
-
-    /**
-     * show search and list project when call get method
-     */
-    @GetMapping("/query")
-    String queryreset(@RequestParam(value = "text_search") String strQuery,
-            @RequestParam(value = "status_search") String statusQuery, Model model,
-            @RequestParam("sort_by") String sortBy, @RequestParam("sort_type") String sortType) {
-        sessionValue.setOrderBy(AppUtils.verifySortByParam(sortBy));
-        sessionValue.setSortType(AppUtils.verifySortTypeParam(sortType));
-        sessionValue.setTextQuery(strQuery);
-        sessionValue.setStatusQuery(statusQuery);
-        model.addAttribute("strQuery", "");
-        model.addAttribute("statusQuery", "");
-        return "redirect:list";
+                projectService.findProjectByQuery(textStr, statusStr, pageNumber, AppUtils.ROW_ON_PAGE,
+                        sessionValue.getOrderBy(), sessionValue.getSortType())).addObject("strQuery", textStr)
+                                .addObject("statusQuery", statusStr);
     }
 
     /**

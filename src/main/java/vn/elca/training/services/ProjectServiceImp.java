@@ -56,7 +56,8 @@ public class ProjectServiceImp implements IProjectService {
      */
     @Override
     public Page<Project> findProjectAll(int pageNum, int rowOnPage, String sortBy, String sortType) {
-        Sort sort = AppUtils.SORT_TYPE_ASC.equals(sortType) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort sort = AppUtils.SORT_TYPE_ASC.equals(sortType) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
         return projectRepository.findAllPaging(PageRequest.of(pageNum, rowOnPage, sort));
     }
 
@@ -67,7 +68,8 @@ public class ProjectServiceImp implements IProjectService {
     public Page<Project> findProjectByQuery(String queryStr, String queryStatus, int pageNum, int rowOnPage,
             String sortBy, String sortType) {
         queryStr = queryStr.toUpperCase();
-        Sort sort = AppUtils.SORT_TYPE_ASC.equals(sortType) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Sort sort = AppUtils.SORT_TYPE_ASC.equals(sortType) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
         Page<Project> listResult;
         if ("".equals(queryStr)) {
             if ("".equals(queryStatus)) {
@@ -107,10 +109,7 @@ public class ProjectServiceImp implements IProjectService {
     @Transactional
     public boolean createProject(Project project, String[] visas) {
         project.setEmployees(employeeRepository.findByVisaList(visas));
-        if (projectRepository.saveAndFlush(project) == null) {
-            return false;
-        }
-        return true;
+        return !(projectRepository.saveAndFlush(project) == null);
     }
 
     /**

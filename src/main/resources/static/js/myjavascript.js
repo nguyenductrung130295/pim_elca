@@ -165,10 +165,7 @@ function handleProjectNumber(){
  * @returns
  */
 $("#btn_reset_search").click(function(){
-	$("#text-search").val("");
-	$("#select_status").val("");
-	$("#searchStatusQuery").val("");
-	window.location.href="query?status_search=&text_search=";
+	window.location.href="query?status_search=&text_search=&sort_by=&sort_type=";
 });
 /**
  * Handle change event on status select search form. set value to input hidden 

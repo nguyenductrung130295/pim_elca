@@ -10,10 +10,10 @@
 <header id="header">
   <div class="row">
     <div class="col-md-6">
-      <div class="col-md-4 text-right">
+      <div class="col-md-3 text-right">
         <img src="/img/logo_elca.png"/>
       </div>
-      <div class="col-md-8">
+      <div class="col-md-9">
           <h3><strong th:text="#{label.project_name}"></strong></h3>
       </div>
     </div>
@@ -23,7 +23,7 @@
   </div>
 </header>
 <div>
-<div class="col-md-3" id="side-bar">
+<div class="col-md-2" id="side-bar">
   <div class="col-md-5"></div>
   <div class="col-md-7">
     <br><br>
@@ -35,7 +35,7 @@
   </div>
   
 </div>
-<div class="col-md-8" id="main-content">
+<div class="col-md-9" id="main-content">
 <br>
   <h4 th:text="#{label.title.project_list}"></h4>
   <hr>
@@ -77,9 +77,9 @@
         <th></th>
         <th class="col-md-1 text-center cursor-pointer" id="sort_number">
           <span th:text="#{project.number}"></span>
-          <img class="arrow_sort disabled img_right" src="/img/arrow_right.png">
-          <img class="arrow_sort disabled img_down" src="/img/arrow_down.png">
-          <img class="arrow_sort disabled img_up" src="/img/arrow_up.png">
+          <img class="arrow_sort floatright disabled img_right" src="/img/arrow_right.png">
+          <img class="arrow_sort floatright disabled img_down" src="/img/arrow_down.png">
+          <img class="arrow_sort floatright disabled img_up" src="/img/arrow_up.png">
         </th>
         <th class="col-md-4 cursor-pointer" id="sort_name">
           <span th:text="#{project.name}" class="floatleft"></span>
